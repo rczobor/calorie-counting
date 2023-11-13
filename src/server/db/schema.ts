@@ -5,6 +5,7 @@ import {
   int,
   mysqlTableCreator,
   primaryKey,
+  serial,
   text,
   timestamp,
   varchar,
@@ -17,7 +18,9 @@ import { type AdapterAccount } from "next-auth/adapters";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const mysqlTable = mysqlTableCreator((name) => `calorie-counting_${name}`);
+export const mysqlTable = mysqlTableCreator(
+  (name) => `calorie-counting_${name}`,
+);
 
 export const posts = mysqlTable(
   "post",
@@ -33,7 +36,7 @@ export const posts = mysqlTable(
   (example) => ({
     createdByIdIdx: index("createdById_idx").on(example.createdById),
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
 
 export const users = mysqlTable("user", {
@@ -71,7 +74,7 @@ export const accounts = mysqlTable(
   (account) => ({
     compoundKey: primaryKey(account.provider, account.providerAccountId),
     userIdIdx: index("userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -89,7 +92,7 @@ export const sessions = mysqlTable(
   },
   (session) => ({
     userIdIdx: index("userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -105,5 +108,57 @@ export const verificationTokens = mysqlTable(
   },
   (vt) => ({
     compoundKey: primaryKey(vt.identifier, vt.token),
-  })
+  }),
+);
+
+export const ingredients = mysqlTable("ingredient", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 256 }),
+  calories: int("calories"),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+});
+
+export const ingredientRelations = relations(ingredients, ({ many }) => ({
+  recipeToIngredients: many(recipeToIngredients),
+}));
+
+export const recipes = mysqlTable("recipe", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 256 }),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+});
+
+export const recipeRelations = relations(recipes, ({ many }) => ({
+  recipeToIngredients: many(recipeToIngredients),
+}));
+
+export const recipeToIngredients = mysqlTable(
+  "recipeIngredient",
+  {
+    recipeId: int("recipeId").notNull(),
+    ingredientId: int("ingredientId").notNull(),
+  },
+  (t) => ({
+    pk: primaryKey(t.recipeId, t.ingredientId),
+  }),
+);
+
+export const recipeToIngredientsRelations = relations(
+  recipeToIngredients,
+  ({ one }) => ({
+    ingredient: one(ingredients, {
+      fields: [recipeToIngredients.ingredientId],
+      references: [ingredients.id],
+    }),
+    recipe: one(recipes, {
+      fields: [recipeToIngredients.recipeId],
+      references: [recipes.id],
+    }),
+  }),
 );

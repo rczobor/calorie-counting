@@ -9,12 +9,16 @@ export function CreatePost() {
   const router = useRouter();
   const [name, setName] = useState("");
 
-  const createPost = api.post.create.useMutation({
+  const createPost = api.recipe.createWithIngredient.useMutation({
     onSuccess: () => {
       router.refresh();
       setName("");
     },
   });
+
+  const recipes = api.recipe.getRecipeWithIngredients.useQuery({ id: 6 });
+
+  console.log(recipes.data);
 
   return (
     <form
