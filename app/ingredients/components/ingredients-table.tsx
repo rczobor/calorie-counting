@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -9,21 +9,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useState } from "react";
-import { api } from "@/trpc/react";
-import CreateIngredientDialog from "./create-ingredient-dialog";
+} from "@/components/ui/table"
+import { useState } from "react"
+import { api } from "@/trpc/react"
+import CreateIngredientDialog from "./create-ingredient-dialog"
 
 function IngredientsTable() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("")
   const ingredients = api.ingredient.search.useQuery({
     name,
-  });
+  })
   const deleteIngredient = api.ingredient.delete.useMutation({
     onSuccess: async () => {
-      await ingredients.refetch();
+      await ingredients.refetch()
     },
-  });
+  })
 
   return (
     <div className="mx-auto w-8/12">
@@ -53,7 +53,7 @@ function IngredientsTable() {
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    deleteIngredient.mutate({ id: ingredient.id });
+                    deleteIngredient.mutate({ id: ingredient.id })
                   }}
                 >
                   Delete
@@ -64,7 +64,7 @@ function IngredientsTable() {
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }
 
-export default IngredientsTable;
+export default IngredientsTable

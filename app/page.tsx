@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { getServerAuthSession } from "@/server/auth";
-import IngredientsTable from "./ingredients/components/ingredients-table";
+import Link from "next/link"
+import { getServerAuthSession } from "@/server/auth"
+import IngredientsTable from "./ingredients/components/ingredients-table"
 
 export default async function Home() {
-  const session = await getServerAuthSession();
+  const session = await getServerAuthSession()
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-950 to-black text-white">
@@ -48,5 +48,5 @@ export default async function Home() {
         </div>
       </div>
     </main>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import { type Config } from "drizzle-kit";
+import { type Config } from "drizzle-kit"
 
-import { env } from "@/env.mjs";
+import { env } from "@/env.mjs"
 
 export default {
   schema: "./server/db/schema.ts",
@@ -9,4 +9,4 @@ export default {
     connectionString: env.DATABASE_URL,
   },
   tablesFilter: ["calorie-counting_*"],
-} satisfies Config;
+} satisfies Config
