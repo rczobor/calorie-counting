@@ -27,12 +27,15 @@ function IngredientsTable() {
 
   return (
     <div className="mx-auto w-8/12">
-      <Input
-        className="w-auto"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-      />
-      <CreateIngredientDialog onCreate={() => ingredients.refetch()} />
+      <div className="flex gap-4">
+        <Input
+          className="w-auto"
+          placeholder="Search by name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+        <CreateIngredientDialog onCreate={() => ingredients.refetch()} />
+      </div>
       <Table className="text-left">
         <TableHeader>
           <TableRow>
@@ -48,7 +51,7 @@ function IngredientsTable() {
               <TableCell>{ingredient.id}</TableCell>
               <TableCell>{ingredient.name}</TableCell>
               <TableCell>{ingredient.calories}</TableCell>
-              <TableCell>
+              <TableCell className="flex gap-4">
                 <Button>Edit</Button>
                 <Button
                   variant="destructive"

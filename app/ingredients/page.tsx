@@ -1,8 +1,8 @@
-import IngredientsTable from "./components/ingredients-table"
+import IngredientsTable from "./ingredients-table"
 
 export default function Ingredients() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-800 to-black text-white">
+    <main className="container flex flex-col items-center justify-center">
       <IngredientsTable />
     </main>
   )

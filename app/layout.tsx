@@ -1,9 +1,9 @@
 import "@/styles/globals.css"
-
 import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
-
 import { TRPCReactProvider } from "@/trpc/react"
+import { ThemeProvider } from "@/components/ui/theme-provider"
+import { ModeToggle } from "@/components/ui/mode-toggle"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +25,19 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
         <TRPCReactProvider cookies={cookies().toString()}>
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="flex gap-4 p-4">
+              <div className="ml-auto ">
+                <ModeToggle />
+              </div>
+            </div>
+            {children}
+          </ThemeProvider>
         </TRPCReactProvider>
       </body>
     </html>
