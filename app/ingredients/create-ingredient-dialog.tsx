@@ -19,6 +19,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { api } from "@/trpc/react"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -32,11 +34,8 @@ const formSchema = z.object({
     .transform((a) => Number(a)),
 })
 
-export default function CreateIngredientDialog({
-  onCreate,
-}: {
-  onCreate?: () => void
-}) {
+export default function CreateIngredientDialog() {
+  const [open, setOpen] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,22 +43,22 @@ export default function CreateIngredientDialog({
       calories: 0,
     },
   })
-  const createIngredient = api.ingredient.create.useMutation({
-    onSuccess: () => {
+  const utils = api.useUtils()
+  const { mutate, isLoading } = api.ingredient.create.useMutation({
+    onSuccess: async () => {
+      setOpen(false)
       form.reset()
-      onCreate?.()
+      await utils.ingredient.search.invalidate()
     },
   })
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+    mutate(values)
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Create</Button>
+        <Button onClick={() => setOpen(true)}>Create</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Create Ingredient</DialogTitle>
@@ -95,9 +94,18 @@ export default function CreateIngredientDialog({
                 )}
               />
             </div>
-            <Button className="pt-2" type="submit">
-              Create
-            </Button>
+            <div className="flex justify-end pt-4">
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <ReloadIcon className="mr-2 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  <>Create</>
+                )}
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>

@@ -5,10 +5,13 @@ import { ingredients } from "@/server/db/schema"
 
 export const ingredientRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(
+      z.object({ name: z.string().min(1), calories: z.number().nonnegative() }),
+    )
     .mutation(({ ctx, input }) => {
       return ctx.db.insert(ingredients).values({
         name: input.name,
+        calories: input.calories,
       })
     }),
 

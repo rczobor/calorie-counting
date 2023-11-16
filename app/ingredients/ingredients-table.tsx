@@ -34,7 +34,7 @@ function IngredientsTable() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <CreateIngredientDialog onCreate={() => ingredients.refetch()} />
+        <CreateIngredientDialog />
       </div>
       <Table className="text-left">
         <TableHeader>
@@ -50,11 +50,12 @@ function IngredientsTable() {
             <TableRow key={ingredient.id}>
               <TableCell>{ingredient.id}</TableCell>
               <TableCell>{ingredient.name}</TableCell>
-              <TableCell>{ingredient.calories}</TableCell>
+              <TableCell>{ingredient.calories?.toString()}</TableCell>
               <TableCell className="flex gap-4">
                 <Button>Edit</Button>
                 <Button
                   variant="destructive"
+                  disabled={deleteIngredient.isLoading}
                   onClick={() => {
                     deleteIngredient.mutate({ id: ingredient.id })
                   }}
