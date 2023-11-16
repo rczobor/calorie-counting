@@ -3,7 +3,7 @@ import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
 import { TRPCReactProvider } from "@/trpc/react"
 import { ThemeProvider } from "@/components/ui/theme-provider"
-import { ModeToggle } from "@/components/ui/mode-toggle"
+import Navbar from "./navbar"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,11 +31,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="flex gap-4 p-4">
-              <div className="ml-auto ">
-                <ModeToggle />
-              </div>
-            </div>
+            <Navbar />
             {children}
           </ThemeProvider>
         </TRPCReactProvider>
