@@ -4,7 +4,7 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { ingredients } from "@/server/db/schema"
 
 export const ingredientRouter = createTRPCRouter({
-  create: protectedProcedure
+  insert: protectedProcedure
     .input(
       z.object({ name: z.string().min(1), calories: z.number().nonnegative() }),
     )
@@ -13,6 +13,24 @@ export const ingredientRouter = createTRPCRouter({
         name: input.name,
         calories: input.calories,
       })
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1),
+        calories: z.number().nonnegative(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db
+        .update(ingredients)
+        .set({
+          name: input.name,
+          calories: input.calories,
+        })
+        .where(eq(ingredients.id, input.id))
     }),
 
   delete: protectedProcedure

@@ -52,7 +52,7 @@ function IngredientsTable() {
               <TableCell>{ingredient.name}</TableCell>
               <TableCell>{ingredient.calories?.toString()}</TableCell>
               <TableCell className="flex gap-4">
-                <Button>Edit</Button>
+                <CreateIngredientDialog ingredient={ingredient} />
                 <Button
                   variant="destructive"
                   disabled={deleteIngredient.isLoading}

@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { type SelectIngredient } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
@@ -34,31 +35,50 @@ const formSchema = z.object({
     .transform((a) => Number(a)),
 })
 
-export default function CreateIngredientDialog() {
+export default function CreateIngredientDialog({
+  ingredient,
+}: {
+  ingredient?: SelectIngredient
+}) {
   const [open, setOpen] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      calories: 0,
+      name: ingredient?.name ?? "",
+      calories: ingredient?.calories ?? 0,
     },
   })
   const utils = api.useUtils()
-  const { mutate, isLoading } = api.ingredient.create.useMutation({
+  const insert = api.ingredient.insert.useMutation({
     onSuccess: async () => {
       setOpen(false)
       form.reset()
       await utils.ingredient.search.invalidate()
     },
   })
+
+  const update = api.ingredient.update.useMutation({
+    onSuccess: async () => {
+      setOpen(false)
+      form.reset()
+      await utils.ingredient.search.invalidate()
+    },
+  })
+
+  const isLoading = insert.isLoading || update.isLoading
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    mutate(values)
+    if (ingredient) {
+      update.mutate({ ...values, id: ingredient.id })
+      return
+    }
+    insert.mutate(values)
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)}>Create</Button>
+        <Button>{ingredient ? "Edit" : "Create"}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Create Ingredient</DialogTitle>
@@ -102,7 +122,7 @@ export default function CreateIngredientDialog() {
                     Please wait
                   </>
                 ) : (
-                  <>Create</>
+                  <>Save</>
                 )}
               </Button>
             </div>
