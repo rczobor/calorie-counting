@@ -29,10 +29,9 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  calories: z
-    .string()
-    .min(1, { message: "Calories is required" })
-    .transform((a) => Number(a)),
+  calories: z.coerce
+    .number()
+    .nonnegative({ message: "Calories must be a positive number" }),
 })
 
 export default function CreateIngredientDialog({
