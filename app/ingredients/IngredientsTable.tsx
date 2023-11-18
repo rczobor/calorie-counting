@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -10,49 +9,49 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useState } from "react"
-import { api } from "@/trpc/react"
+import { type SelectIngredient } from "@/server/db/schema"
 import IngredientDialog from "./IngredientDialog"
+import { api } from "@/trpc/react"
 
-function IngredientsTable() {
-  const [name, setName] = useState("")
-  const ingredients = api.ingredient.search.useQuery({
-    name,
-  })
+type variant = "default" | "add" | "remove"
+
+export default function IngredientsTable({
+  ingredients,
+  variant = "default",
+  onAdd,
+  onRemove,
+}: {
+  ingredients: SelectIngredient[]
+  variant?: variant
+  onAdd?: (ingredient: SelectIngredient) => void
+  onRemove?: (ingredient: SelectIngredient) => void
+}) {
+  const utils = api.useUtils()
   const deleteIngredient = api.ingredient.delete.useMutation({
     onSuccess: async () => {
-      await ingredients.refetch()
+      await utils.ingredient.search.invalidate()
     },
   })
 
   return (
-    <div className="mx-auto w-8/12">
-      <div className="flex gap-4">
-        <Input
-          className="w-auto"
-          placeholder="Search by name"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-        />
-        <IngredientDialog />
-      </div>
-      <Table className="text-left">
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Calories</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {ingredients.data?.map((ingredient) => (
-            <TableRow key={ingredient.id}>
-              <TableCell>{ingredient.id}</TableCell>
-              <TableCell>{ingredient.name}</TableCell>
-              <TableCell>{ingredient.calories?.toString()}</TableCell>
-              <TableCell className="flex gap-4">
-                <IngredientDialog ingredient={ingredient} />
+    <Table className="text-left">
+      <TableHeader>
+        <TableRow>
+          <TableHead>ID</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Calories</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {ingredients.map((ingredient) => (
+          <TableRow key={ingredient.id}>
+            <TableCell>{ingredient.id}</TableCell>
+            <TableCell>{ingredient.name}</TableCell>
+            <TableCell>{ingredient.calories?.toString()}</TableCell>
+            <TableCell className="flex gap-4">
+              <IngredientDialog ingredient={ingredient} />
+              {variant === "default" && (
                 <Button
                   variant="destructive"
                   disabled={deleteIngredient.isLoading}
@@ -62,13 +61,29 @@ function IngredientsTable() {
                 >
                   Delete
                 </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+              )}
+              {variant === "add" && (
+                <Button
+                  onClick={() => {
+                    onAdd?.(ingredient)
+                  }}
+                >
+                  Add
+                </Button>
+              )}
+              {variant === "remove" && (
+                <Button
+                  onClick={() => {
+                    onRemove?.(ingredient)
+                  }}
+                >
+                  Remove
+                </Button>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }
-
-export default IngredientsTable

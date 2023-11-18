@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/table"
 import { api } from "@/trpc/react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function RecipesTable() {
   const [name, setName] = useState("")
+  const router = useRouter()
   const recipes = api.recipe.search.useQuery({
     name,
   })
@@ -28,14 +30,14 @@ export default function RecipesTable() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        {/* <CreateIngredientDialog /> */}
+        {/* <CreateRecipeDialog /> */}
+        <Button onClick={() => router.push("recipes/new")}>Create</Button>
       </div>
       <Table className="text-left">
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Calories</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -45,8 +47,10 @@ export default function RecipesTable() {
               <TableCell>{recipe.id}</TableCell>
               <TableCell>{recipe.name}</TableCell>
               <TableCell className="flex gap-4">
-                {/* <CreateIngredientDialog ingredient={ingredient} /> */}
-                <Button>Delete</Button>
+                <Button onClick={() => router.push(`recipes/${recipe.id}`)}>
+                  Edit
+                </Button>
+                <Button variant="destructive">Delete</Button>
               </TableCell>
             </TableRow>
           ))}

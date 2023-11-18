@@ -2,8 +2,10 @@ import RecipesTable from "./RecipesTable"
 
 export default function Recipes() {
   return (
-    <main className="container py-6">
+    <section>
+      <h1 className="text-center text-xl font-bold">Recipes</h1>
+      <div className="p-4" />
       <RecipesTable />
-    </main>
+    </section>
   )
 }

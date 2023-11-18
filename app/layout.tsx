@@ -32,7 +32,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navbar />
-            {children}
+            <main className="container py-6">{children}</main>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

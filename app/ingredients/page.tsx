@@ -1,9 +1,5 @@
-import IngredientsTable from "./IngredientsTable"
+import Ingredients from "./Ingredients"
 
-export default function Ingredients() {
-  return (
-    <main className="container py-6">
-      <IngredientsTable />
-    </main>
-  )
+export default function IngredientsPage() {
+  return <Ingredients />
 }
