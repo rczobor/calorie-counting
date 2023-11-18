@@ -144,6 +144,8 @@ export const recipes = mysqlTable(
   }),
 )
 
+export type SelectRecipe = typeof recipes.$inferSelect
+
 export const recipeToIngredients = mysqlTable(
   "recipeIngredient",
   {

@@ -39,22 +39,13 @@ export const ingredientRouter = createTRPCRouter({
       return ctx.db.delete(ingredients).where(eq(ingredients.id, input.id))
     }),
 
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.query.ingredients.findMany()
-  }),
-
   search: protectedProcedure
     .input(z.object({ name: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.db.query.ingredients.findMany({
         where: like(ingredients.name, `%${input.name}%`),
         orderBy: (ingredients, { desc }) => [desc(ingredients.updatedAt)],
+        limit: 10,
       })
     }),
-
-  getLatest: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.query.ingredients.findFirst({
-      orderBy: (ingredients, { desc }) => [desc(ingredients.updatedAt)],
-    })
-  }),
 })

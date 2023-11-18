@@ -1,4 +1,4 @@
-import { eq, or } from "drizzle-orm"
+import { eq, like, or } from "drizzle-orm"
 import { z } from "zod"
 
 import {
@@ -9,13 +9,21 @@ import {
 import { ingredients, recipes, recipeToIngredients } from "@/server/db/schema"
 
 export const recipeRouter = createTRPCRouter({
-  create: protectedProcedure
+  insert: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
       await ctx.db.insert(recipes).values({
         name: input.name,
+      })
+    }),
+
+  search: protectedProcedure
+    .input(z.object({ name: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.query.recipes.findMany({
+        where: like(recipes.name, `%${input.name}%`),
+        orderBy: (recipes, { desc }) => [desc(recipes.updatedAt)],
+        limit: 10,
       })
     }),
 
@@ -76,16 +84,4 @@ export const recipeRouter = createTRPCRouter({
         },
       })
     }),
-
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    await ctx.db.query.recipes.findMany()
-  }),
-
-  getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.db.query.posts.findFirst({
-      orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-    })
-  }),
 })

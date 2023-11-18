@@ -34,7 +34,7 @@ const formSchema = z.object({
     .nonnegative({ message: "Calories must be a positive number" }),
 })
 
-export default function CreateIngredientDialog({
+export default function IngredientDialog({
   ingredient,
 }: {
   ingredient?: SelectIngredient

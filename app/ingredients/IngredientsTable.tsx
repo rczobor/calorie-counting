@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table"
 import { useState } from "react"
 import { api } from "@/trpc/react"
-import CreateIngredientDialog from "./create-ingredient-dialog"
+import IngredientDialog from "./IngredientDialog"
 
 function IngredientsTable() {
   const [name, setName] = useState("")
@@ -34,7 +34,7 @@ function IngredientsTable() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <CreateIngredientDialog />
+        <IngredientDialog />
       </div>
       <Table className="text-left">
         <TableHeader>
@@ -52,7 +52,7 @@ function IngredientsTable() {
               <TableCell>{ingredient.name}</TableCell>
               <TableCell>{ingredient.calories?.toString()}</TableCell>
               <TableCell className="flex gap-4">
-                <CreateIngredientDialog ingredient={ingredient} />
+                <IngredientDialog ingredient={ingredient} />
                 <Button
                   variant="destructive"
                   disabled={deleteIngredient.isLoading}

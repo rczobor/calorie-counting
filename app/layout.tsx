@@ -3,7 +3,7 @@ import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
 import { TRPCReactProvider } from "@/trpc/react"
 import { ThemeProvider } from "@/components/ui/theme-provider"
-import Navbar from "./navbar"
+import Navbar from "./Navbar"
 
 const inter = Inter({
   subsets: ["latin"],

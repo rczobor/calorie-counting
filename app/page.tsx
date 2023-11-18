@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { getServerAuthSession } from "@/server/auth"
-import IngredientsTable from "./ingredients/ingredients-table"
+import IngredientsTable from "./ingredients/IngredientsTable"
 
 export default async function Home() {
   const session = await getServerAuthSession()

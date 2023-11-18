@@ -1,4 +1,4 @@
-import IngredientsTable from "./ingredients-table"
+import IngredientsTable from "./IngredientsTable"
 
 export default function Ingredients() {
   return (
