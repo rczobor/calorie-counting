@@ -21,6 +21,13 @@ export default function RecipesTable() {
   const recipes = api.recipe.search.useQuery({
     name,
   })
+  const utils = api.useUtils()
+  const deleteMutation = api.recipe.delete.useMutation({
+    onSuccess: async () => {
+      await utils.recipe.search.invalidate()
+      router.refresh()
+    },
+  })
 
   return (
     <div className="mx-auto w-8/12">
@@ -50,7 +57,9 @@ export default function RecipesTable() {
                 <Button onClick={() => router.push(`recipes/${recipe.id}`)}>
                   Edit
                 </Button>
-                <ConfirmDelete onConfirm={() => console.log("asdasd")} />
+                <ConfirmDelete
+                  onConfirm={() => deleteMutation.mutate({ id: recipe.id })}
+                />
               </TableCell>
             </TableRow>
           ))}
