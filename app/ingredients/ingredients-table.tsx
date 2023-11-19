@@ -12,7 +12,7 @@ import {
 import { type Ingredient } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import { useRouter } from "next/navigation"
-import IngredientDialog from "./IngredientDialog"
+import IngredientDialog from "./ingredient-dialog"
 
 type variant = "default" | "add" | "remove"
 

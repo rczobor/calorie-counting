@@ -3,8 +3,8 @@
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { api } from "@/trpc/react"
-import IngredientDialog from "./IngredientDialog"
-import IngredientsTable from "./IngredientsTable"
+import IngredientDialog from "./ingredient-dialog"
+import IngredientsTable from "./ingredients-table"
 
 export default function Ingredients() {
   const [name, setName] = useState("")

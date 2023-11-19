@@ -1,4 +1,4 @@
-import RecipesTable from "./RecipesTable"
+import RecipesTable from "./recipes-table"
 
 export default function Recipes() {
   return (

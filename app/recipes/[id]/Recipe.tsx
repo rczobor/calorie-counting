@@ -1,7 +1,7 @@
 "use client"
 
-import IngredientDialog from "@/app/ingredients/IngredientDialog"
-import IngredientsTable from "@/app/ingredients/IngredientsTable"
+import IngredientDialog from "@/app/ingredients/ingredient-dialog"
+import IngredientsTable from "@/app/ingredients/ingredients-table"
 import { Button } from "@/components/ui/button"
 import {
   Form,
