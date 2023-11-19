@@ -1,42 +1,50 @@
-import { eq, like } from "drizzle-orm"
+import { eq, like, or } from "drizzle-orm"
 import { z } from "zod"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
-import { ingredients } from "@/server/db/schema"
+import { ingredients, recipeToIngredients } from "@/server/db/schema"
 
 export const ingredientRouter = createTRPCRouter({
-  insert: protectedProcedure
-    .input(
-      z.object({ name: z.string().min(1), calories: z.number().nonnegative() }),
-    )
-    .mutation(({ ctx, input }) => {
-      return ctx.db.insert(ingredients).values({
-        name: input.name,
-        calories: input.calories,
-      })
-    }),
-
-  update: protectedProcedure
+  upsert: protectedProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.number().optional(),
         name: z.string().min(1),
         calories: z.number().nonnegative(),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.db
-        .update(ingredients)
-        .set({
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .insert(ingredients)
+        .values({
+          id: input.id,
           name: input.name,
           calories: input.calories,
         })
-        .where(eq(ingredients.id, input.id))
+        .onDuplicateKeyUpdate({
+          set: {
+            name: input.name,
+            calories: input.calories,
+          },
+        })
+
+      const ingredient = await ctx.db.query.ingredients.findFirst({
+        where: eq(ingredients.name, input.name),
+      })
+
+      if (!ingredient) {
+        throw new Error("not found")
+      }
+
+      return ingredient
     }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.db.delete(ingredients).where(eq(ingredients.id, input.id))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(ingredients).where(eq(ingredients.id, input.id))
+      await ctx.db
+        .delete(recipeToIngredients)
+        .where(eq(recipeToIngredients.ingredientId, input.id))
     }),
 
   search: protectedProcedure

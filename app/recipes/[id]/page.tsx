@@ -1,7 +1,11 @@
 import { api } from "@/trpc/server"
 import Recipe from "./Recipe"
 
-export default function RecipePage({ params }: { params: { id: string } }) {
+export default async function RecipePage({
+  params,
+}: {
+  params: { id: string }
+}) {
   if (params.id === "new") {
     return (
       <section>
@@ -11,9 +15,14 @@ export default function RecipePage({ params }: { params: { id: string } }) {
     )
   }
 
-  const recipe = api.recipe.getById.query({ id: +params.id })
+  const recipe = await api.recipe.getById.query({ id: +params.id })
 
-  console.log(recipe)
+  if (!recipe) return <div>Recipe not found</div>
 
-  return <div>{params.id}</div>
+  return (
+    <section>
+      <h1 className="text-center text-xl font-bold">Add new recipe</h1>
+      <Recipe recipe={recipe} />
+    </section>
+  )
 }

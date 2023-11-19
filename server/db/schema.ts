@@ -115,7 +115,7 @@ export const ingredients = mysqlTable(
   "ingredient",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }).unique(),
+    name: varchar("name", { length: 256 }).unique().notNull(),
     calories: int("calories"),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
@@ -127,13 +127,13 @@ export const ingredients = mysqlTable(
   }),
 )
 
-export type SelectIngredient = typeof ingredients.$inferSelect
+export type Ingredient = typeof ingredients.$inferSelect
 
 export const recipes = mysqlTable(
   "recipe",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }).unique(),
+    name: varchar("name", { length: 256 }).unique().notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -144,10 +144,16 @@ export const recipes = mysqlTable(
   }),
 )
 
-export type SelectRecipe = typeof recipes.$inferSelect
+export type RecipeWithIngredient = typeof recipes.$inferSelect & {
+  recipeToIngredients: (typeof recipeToIngredients.$inferSelect & {
+    ingredient: typeof ingredients.$inferSelect
+  })[]
+}
+
+export type Recipe = typeof recipes.$inferSelect
 
 export const recipeToIngredients = mysqlTable(
-  "recipeIngredient",
+  "recipeToIngredient",
   {
     recipeId: int("recipeId").notNull(),
     ingredientId: int("ingredientId").notNull(),

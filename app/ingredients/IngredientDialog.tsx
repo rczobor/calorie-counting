@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { type SelectIngredient } from "@/server/db/schema"
+import { type Ingredient } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
@@ -36,8 +36,10 @@ const formSchema = z.object({
 
 export default function IngredientDialog({
   ingredient,
+  onAdd,
 }: {
-  ingredient?: SelectIngredient
+  ingredient?: Ingredient
+  onAdd?: (ingredient: Ingredient) => void
 }) {
   const [open, setOpen] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,30 +50,17 @@ export default function IngredientDialog({
     },
   })
   const utils = api.useUtils()
-  const insert = api.ingredient.insert.useMutation({
-    onSuccess: async () => {
+  const upsert = api.ingredient.upsert.useMutation({
+    onSuccess: async (ingredient) => {
       setOpen(false)
       form.reset()
+      onAdd?.(ingredient)
       await utils.ingredient.search.invalidate()
     },
   })
-
-  const update = api.ingredient.update.useMutation({
-    onSuccess: async () => {
-      setOpen(false)
-      form.reset()
-      await utils.ingredient.search.invalidate()
-    },
-  })
-
-  const isLoading = insert.isLoading || update.isLoading
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (ingredient) {
-      update.mutate({ ...values, id: ingredient.id })
-      return
-    }
-    insert.mutate(values)
+    upsert.mutate({ ...values, id: ingredient?.id })
   }
 
   return (
@@ -114,8 +103,8 @@ export default function IngredientDialog({
               />
             </div>
             <div className="flex justify-end pt-4">
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? (
+              <Button type="submit" disabled={upsert.isLoading}>
+                {upsert.isLoading ? (
                   <>
                     <ReloadIcon className="mr-2 animate-spin" />
                     Please wait

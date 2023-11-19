@@ -8,7 +8,6 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-
 import Link from "next/link"
 
 export default function Navbar() {

@@ -9,9 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { type SelectIngredient } from "@/server/db/schema"
-import IngredientDialog from "./IngredientDialog"
+import { type Ingredient } from "@/server/db/schema"
 import { api } from "@/trpc/react"
+import { useRouter } from "next/navigation"
+import IngredientDialog from "./IngredientDialog"
 
 type variant = "default" | "add" | "remove"
 
@@ -21,15 +22,17 @@ export default function IngredientsTable({
   onAdd,
   onRemove,
 }: {
-  ingredients: SelectIngredient[]
+  ingredients: Ingredient[]
   variant?: variant
-  onAdd?: (ingredient: SelectIngredient) => void
-  onRemove?: (ingredient: SelectIngredient) => void
+  onAdd?: (ingredient: Ingredient) => void
+  onRemove?: (ingredient: Ingredient) => void
 }) {
+  const router = useRouter()
   const utils = api.useUtils()
   const deleteIngredient = api.ingredient.delete.useMutation({
     onSuccess: async () => {
       await utils.ingredient.search.invalidate()
+      router.refresh()
     },
   })
 

@@ -1,18 +1,30 @@
-import { eq, like, or } from "drizzle-orm"
+import { and, eq, inArray, like, not, sql } from "drizzle-orm"
 import { z } from "zod"
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { recipes, recipeToIngredients } from "@/server/db/schema"
 
 export const recipeRouter = createTRPCRouter({
-  insert: protectedProcedure
+  upsert: protectedProcedure
     .input(
-      z.object({ name: z.string().min(2), ingredientIds: z.array(z.number()) }),
+      z.object({
+        name: z.string().min(2),
+        recipeId: z.number().optional(),
+        ingredientIds: z.array(z.number()),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.insert(recipes).values({
-        name: input.name,
-      })
+      await ctx.db
+        .insert(recipes)
+        .values({
+          id: input.recipeId,
+          name: input.name,
+        })
+        .onDuplicateKeyUpdate({
+          set: {
+            name: input.name,
+          },
+        })
 
       const recipe = await ctx.db.query.recipes.findFirst({
         where: eq(recipes.name, input.name),
@@ -22,12 +34,39 @@ export const recipeRouter = createTRPCRouter({
         throw new Error("not found")
       }
 
-      await ctx.db.insert(recipeToIngredients).values(
-        input.ingredientIds.map((ingredientId) => ({
-          recipeId: recipe.id,
-          ingredientId,
-        })),
-      )
+      if (input.ingredientIds.length > 0) {
+        await ctx.db
+          .delete(recipeToIngredients)
+          .where(
+            and(
+              eq(recipeToIngredients.recipeId, recipe.id),
+              not(
+                inArray(recipeToIngredients.ingredientId, input.ingredientIds),
+              ),
+            ),
+          )
+      } else {
+        await ctx.db
+          .delete(recipeToIngredients)
+          .where(eq(recipeToIngredients.recipeId, recipe.id))
+      }
+
+      if (input.ingredientIds.length > 0) {
+        await ctx.db
+          .insert(recipeToIngredients)
+          .values(
+            input.ingredientIds.map((ingredientId) => ({
+              recipeId: recipe.id,
+              ingredientId,
+            })),
+          )
+          .onDuplicateKeyUpdate({
+            set: {
+              recipeId: sql`recipeId`,
+              ingredientId: sql`ingredientId`,
+            },
+          })
+      }
 
       return recipe
     }),
@@ -43,8 +82,11 @@ export const recipeRouter = createTRPCRouter({
     }),
 
   getById: protectedProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.number().optional() }))
     .query(({ ctx, input }) => {
+      if (input.id === undefined) {
+        return
+      }
       return ctx.db.query.recipes.findFirst({
         where: eq(recipes.id, input.id),
         with: {
@@ -55,6 +97,15 @@ export const recipeRouter = createTRPCRouter({
           },
         },
       })
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(recipes).where(eq(recipes.id, input.id))
+      await ctx.db
+        .delete(recipeToIngredients)
+        .where(eq(recipeToIngredients.recipeId, input.id))
     }),
 
   // createWithIngredient: protectedProcedure

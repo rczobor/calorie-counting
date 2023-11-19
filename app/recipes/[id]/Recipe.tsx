@@ -4,16 +4,16 @@ import IngredientDialog from "@/app/ingredients/IngredientDialog"
 import IngredientsTable from "@/app/ingredients/IngredientsTable"
 import { Button } from "@/components/ui/button"
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { SelectRecipe, type SelectIngredient } from "@/server/db/schema"
+import { type Ingredient, type RecipeWithIngredient } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
@@ -28,33 +28,41 @@ const formSchema = z.object({
   }),
 })
 
-export default function Recipe() {
+export default function Recipe({ recipe }: { recipe?: RecipeWithIngredient }) {
   const router = useRouter()
   const [addedIngredients, setAddedIngredients] = useState(
-    [] as SelectIngredient[],
+    recipe?.recipeToIngredients
+      .map((v) => v.ingredient)
+      .sort((a, b) => {
+        if (a.name < b.name) return -1
+        if (a.name > b.name) return 1
+        return 0
+      }) ?? ([] as Ingredient[]),
   )
   const [name, setName] = useState("")
   const ingredients = api.ingredient.search.useQuery({ name })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      name: recipe?.name ?? "",
     },
   })
   const utils = api.useUtils()
-  const insert = api.recipe.insert.useMutation({
-    onSuccess: async (recipe: SelectRecipe) => {
+  const upsert = api.recipe.upsert.useMutation({
+    onSuccess: async (response) => {
       await utils.recipe.search.invalidate()
-
-      router.push(`/recipes/${recipe.id}`)
+      if (!recipe) {
+        router.push(`/recipes/${response.id}`)
+      }
+      router.refresh()
     },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    insert.mutate({
+    upsert.mutate({
       name: values.name,
       ingredientIds: addedIngredients.map((ingredient) => ingredient.id),
+      recipeId: recipe?.id,
     })
   }
 
@@ -73,8 +81,8 @@ export default function Recipe() {
                     <FormControl>
                       <Input placeholder="Name" {...field} />
                     </FormControl>
-                    <Button type="submit" disabled={insert.isLoading}>
-                      {insert.isLoading ? (
+                    <Button type="submit" disabled={upsert.isLoading}>
+                      {upsert.isLoading ? (
                         <>
                           <ReloadIcon className="mr-2 animate-spin" />
                           Please wait
@@ -110,7 +118,11 @@ export default function Recipe() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <IngredientDialog />
+        <IngredientDialog
+          onAdd={(ingredient) =>
+            setAddedIngredients([...addedIngredients, ingredient])
+          }
+        />
       </div>
       <IngredientsTable
         ingredients={
