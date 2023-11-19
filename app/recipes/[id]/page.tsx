@@ -1,5 +1,5 @@
 import { api } from "@/trpc/server"
-import Recipe from "./Recipe"
+import Recipe from "./recipe"
 
 export default async function RecipePage({
   params,

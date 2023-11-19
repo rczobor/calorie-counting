@@ -13,6 +13,7 @@ import { type Ingredient } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import { useRouter } from "next/navigation"
 import IngredientDialog from "./ingredient-dialog"
+import ConfirmDelete from "@/components/confirm-delete"
 
 type variant = "default" | "add" | "remove"
 
@@ -55,15 +56,11 @@ export default function IngredientsTable({
             <TableCell className="flex gap-4">
               <IngredientDialog ingredient={ingredient} />
               {variant === "default" && (
-                <Button
-                  variant="destructive"
-                  disabled={deleteIngredient.isLoading}
-                  onClick={() => {
+                <ConfirmDelete
+                  onConfirm={() =>
                     deleteIngredient.mutate({ id: ingredient.id })
-                  }}
-                >
-                  Delete
-                </Button>
+                  }
+                />
               )}
               {variant === "add" && (
                 <Button

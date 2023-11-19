@@ -1,18 +1,19 @@
 "use client"
 
+import ConfirmDelete from "@/components/confirm-delete"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
-  TableHeader,
-  TableRow,
-  TableHead,
+  Table,
   TableBody,
   TableCell,
-  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table"
 import { api } from "@/trpc/react"
-import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 export default function RecipesTable() {
   const [name, setName] = useState("")
@@ -30,7 +31,6 @@ export default function RecipesTable() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        {/* <CreateRecipeDialog /> */}
         <Button onClick={() => router.push("recipes/new")}>Create</Button>
       </div>
       <Table className="text-left">
@@ -50,7 +50,7 @@ export default function RecipesTable() {
                 <Button onClick={() => router.push(`recipes/${recipe.id}`)}>
                   Edit
                 </Button>
-                <Button variant="destructive">Delete</Button>
+                <ConfirmDelete onConfirm={() => console.log("asdasd")} />
               </TableCell>
             </TableRow>
           ))}
