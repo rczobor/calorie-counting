@@ -1,8 +1,8 @@
 "use client"
 
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
 import { api } from "@/trpc/react"
+import { useState } from "react"
 import IngredientDialog from "./ingredient-dialog"
 import IngredientsTable from "./ingredients-table"
 
