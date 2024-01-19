@@ -1,7 +1,7 @@
 import { api } from "@/trpc/server"
-import Recipe from "./recipe"
+import Cooking from "./cooking"
 
-export default async function RecipePage({
+export default async function CookingPage({
   params,
 }: {
   params: { id: string }
@@ -9,8 +9,8 @@ export default async function RecipePage({
   if (params.id === "new") {
     return (
       <section>
-        <h1 className="text-center text-xl font-bold">Recipe</h1>
-        <Recipe />
+        <h1 className="text-center text-xl font-bold">Cooking</h1>
+        <Cooking />
       </section>
     )
   }
@@ -21,8 +21,8 @@ export default async function RecipePage({
 
   return (
     <section>
-      <h1 className="text-center text-xl font-bold">Recipe</h1>
-      <Recipe recipe={recipe} />
+      <h1 className="text-center text-xl font-bold">Cooking</h1>
+      {/* <Recipe recipe={recipe} /> */}
     </section>
   )
 }

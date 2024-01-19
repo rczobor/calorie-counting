@@ -254,6 +254,8 @@ export const cookings = mysqlTable(
   }),
 )
 
+export type Cooking = typeof cookings.$inferSelect
+
 export const cookingRelations = relations(cookings, ({ many }) => ({
   foods: many(foods),
 }))

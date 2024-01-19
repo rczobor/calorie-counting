@@ -2,35 +2,48 @@ import { and, eq, inArray, like, not, sql } from "drizzle-orm"
 import { z } from "zod"
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
-import { ingredients, recipes, recipeToIngredients } from "@/server/db/schema"
+import {
+  foods,
+  ingredients,
+  recipes,
+  recipeToIngredients,
+} from "@/server/db/schema"
 
-export const recipeRouter = createTRPCRouter({
+export const foodRouter = createTRPCRouter({
   upsert: protectedProcedure
     .input(
       z.object({
         name: z.string().min(2),
-        recipeId: z.number().optional(),
+        id: z.number().optional(),
+        recipeId: z.number(),
+        cookingId: z.number(),
         ingredientIds: z.array(z.number()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db
-        .insert(recipes)
+      const query = await ctx.db
+        .insert(foods)
         .values({
-          id: input.recipeId,
+          id: input.id,
+          recipeId: input.recipeId,
+          cookingId: input.cookingId,
           name: input.name,
         })
         .onDuplicateKeyUpdate({
           set: {
+            recipeId: input.recipeId,
+            cookingId: input.cookingId,
             name: input.name,
           },
         })
 
-      const recipe = await ctx.db.query.recipes.findFirst({
-        where: eq(recipes.name, input.name),
+      const id = input.id ?? +query.insertId
+
+      const food = await ctx.db.query.foods.findFirst({
+        where: eq(foods.id, id),
       })
 
-      if (!recipe) {
+      if (!food) {
         throw new Error("not found")
       }
 
@@ -39,7 +52,7 @@ export const recipeRouter = createTRPCRouter({
           .delete(recipeToIngredients)
           .where(
             and(
-              eq(recipeToIngredients.recipeId, recipe.id),
+              eq(recipeToIngredients.recipeId, food.id),
               not(
                 inArray(recipeToIngredients.ingredientId, input.ingredientIds),
               ),
@@ -48,7 +61,7 @@ export const recipeRouter = createTRPCRouter({
       } else {
         await ctx.db
           .delete(recipeToIngredients)
-          .where(eq(recipeToIngredients.recipeId, recipe.id))
+          .where(eq(recipeToIngredients.recipeId, food.id))
       }
 
       if (input.ingredientIds.length > 0) {
@@ -68,7 +81,7 @@ export const recipeRouter = createTRPCRouter({
           })
       }
 
-      return recipe
+      return food
     }),
 
   search: protectedProcedure

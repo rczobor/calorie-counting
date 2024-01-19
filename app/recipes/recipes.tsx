@@ -1,14 +1,16 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { api } from "@/trpc/react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
-import IngredientDialog from "./ingredient-dialog"
-import IngredientsTable from "./ingredients-table"
+import RecipesTable from "./recipes-table"
 
-export default function Ingredients() {
+export default function Recipes() {
+  const router = useRouter()
   const [name, setName] = useState("")
-  const ingredients = api.ingredient.search.useQuery({
+  const recipes = api.recipe.search.useQuery({
     name,
   })
 
@@ -21,9 +23,9 @@ export default function Ingredients() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <IngredientDialog />
+        <Button onClick={() => router.push("/recipes/new")}>Create</Button>
       </div>
-      {ingredients.data && <IngredientsTable ingredients={ingredients.data} />}
+      {recipes.data && <RecipesTable recipes={recipes.data} />}
     </>
   )
 }

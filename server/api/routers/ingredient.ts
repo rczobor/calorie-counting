@@ -1,4 +1,4 @@
-import { eq, like, or } from "drizzle-orm"
+import { eq, like } from "drizzle-orm"
 import { z } from "zod"
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
 import { ingredients, recipeToIngredients } from "@/server/db/schema"
@@ -13,7 +13,7 @@ export const ingredientRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db
+      const insert = await ctx.db
         .insert(ingredients)
         .values({
           id: input.id,
@@ -27,15 +27,17 @@ export const ingredientRouter = createTRPCRouter({
           },
         })
 
+      const id = input.id ?? +insert.insertId
+
       const ingredient = await ctx.db.query.ingredients.findFirst({
-        where: eq(ingredients.name, input.name),
+        where: eq(ingredients.id, id),
       })
 
       if (!ingredient) {
         throw new Error("not found")
       }
 
-      return ingredient
+      return { ingredient }
     }),
 
   delete: protectedProcedure

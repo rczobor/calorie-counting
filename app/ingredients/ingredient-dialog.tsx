@@ -51,7 +51,7 @@ export default function IngredientDialog({
   })
   const utils = api.useUtils()
   const upsert = api.ingredient.upsert.useMutation({
-    onSuccess: async (ingredient) => {
+    onSuccess: async ({ ingredient }) => {
       setOpen(false)
       form.reset()
       onAdd?.(ingredient)
