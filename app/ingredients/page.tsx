@@ -1,4 +1,4 @@
-import Ingredients from "./ingredients"
+import Ingredients from "./"
 
 export default function IngredientsPage() {
   return (

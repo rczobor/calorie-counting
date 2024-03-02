@@ -69,7 +69,7 @@ export const foodRouter = createTRPCRouter({
           .insert(recipeToIngredients)
           .values(
             input.ingredientIds.map((ingredientId) => ({
-              recipeId: recipe.id,
+              recipeId: input.recipeId,
               ingredientId,
             })),
           )
