@@ -1,5 +1,6 @@
 import { api } from "@/trpc/server"
-import Cooking from "./cooking"
+import CreateCooking from "./create-cooking"
+import EditCooking from "./edit-cooking"
 
 export default async function CookingPage({
   params,
@@ -10,19 +11,19 @@ export default async function CookingPage({
     return (
       <section>
         <h1 className="text-center text-xl font-bold">Cooking</h1>
-        <Cooking />
+        <CreateCooking />
       </section>
     )
   }
 
-  const recipe = await api.recipe.getById.query({ id: +params.id })
+  const cooking = await api.cooking.getById.query({ id: +params.id })
 
-  if (!recipe) return <div>Recipe not found</div>
+  if (!cooking) return <div>Recipe not found</div>
 
   return (
     <section>
       <h1 className="text-center text-xl font-bold">Cooking</h1>
-      {/* <Recipe recipe={recipe} /> */}
+      <EditCooking cooking={cooking} />
     </section>
   )
 }

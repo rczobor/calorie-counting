@@ -72,7 +72,9 @@ export const accounts = mysqlTable(
     session_state: varchar("session_state", { length: 255 }),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    compoundKey: primaryKey({
+      columns: [account.userId, account.provider, account.providerAccountId],
+    }),
     userIdIdx: index("userId_idx").on(account.userId),
   }),
 )
@@ -107,7 +109,9 @@ export const verificationTokens = mysqlTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
+    compoundKey: primaryKey({
+      columns: [vt.identifier, vt.token],
+    }),
   }),
 )
 
@@ -159,7 +163,9 @@ export const recipeToIngredients = mysqlTable(
     ingredientId: int("ingredientId").notNull(),
   },
   (t) => ({
-    pk: primaryKey(t.recipeId, t.ingredientId),
+    pk: primaryKey({
+      columns: [t.recipeId, t.ingredientId],
+    }),
   }),
 )
 
@@ -185,7 +191,7 @@ export const recipeToIngredientsRelations = relations(
   }),
 )
 
-export const usedIngredient = mysqlTable(
+export const usedIngredients = mysqlTable(
   "usedIngredient",
   {
     id: serial("id").primaryKey(),
@@ -203,12 +209,15 @@ export const usedIngredient = mysqlTable(
   }),
 )
 
-export const usedIngredientRelations = relations(usedIngredient, ({ one }) => ({
-  food: one(foods, {
-    fields: [usedIngredient.foodId],
-    references: [foods.id],
+export const usedIngredientRelations = relations(
+  usedIngredients,
+  ({ one }) => ({
+    food: one(foods, {
+      fields: [usedIngredients.foodId],
+      references: [foods.id],
+    }),
   }),
-}))
+)
 
 export const foods = mysqlTable(
   "food",
@@ -227,12 +236,18 @@ export const foods = mysqlTable(
   }),
 )
 
+export type Food = typeof foods.$inferSelect
+
+export type FoodWithUsedIngredients = typeof foods.$inferSelect & {
+  usedIngredients: (typeof usedIngredients.$inferSelect)[]
+}
+
 export const foodRelations = relations(foods, ({ one, many }) => ({
   recipe: one(recipes, {
     fields: [foods.recipeId],
     references: [recipes.id],
   }),
-  usedIngredients: many(usedIngredient),
+  usedIngredients: many(usedIngredients),
   cooking: one(cookings, {
     fields: [foods.cookingId],
     references: [cookings.id],
@@ -255,6 +270,13 @@ export const cookings = mysqlTable(
 )
 
 export type Cooking = typeof cookings.$inferSelect
+
+export type CookingWithFoodsWithUsedIngredients =
+  typeof cookings.$inferSelect & {
+    foods: (typeof foods.$inferSelect & {
+      usedIngredients: (typeof usedIngredients.$inferSelect)[]
+    })[]
+  }
 
 export const cookingRelations = relations(cookings, ({ many }) => ({
   foods: many(foods),

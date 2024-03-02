@@ -112,8 +112,6 @@ export default function RecipesTable({
 function Ingredients({ recipe }: { recipe: Recipe }) {
   const ingredients = api.recipe.getIngredients.useQuery({ id: recipe.id })
 
-  console.log(ingredients.data)
-
   if (!ingredients.data) return null
 
   return <IngredientsTable ingredients={ingredients.data} />

@@ -1,7 +1,6 @@
 "use client"
 
 import RecipesTable from "@/app/recipes/recipes-table"
-import ConfirmDelete from "@/components/confirm-delete"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -12,15 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { type Cooking, type Recipe } from "@/server/db/schema"
+import { type Recipe } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
@@ -35,14 +26,14 @@ const formSchema = z.object({
   }),
 })
 
-export default function Cooking({ cooking }: { cooking?: Cooking }) {
+export default function CreateCooking() {
   const router = useRouter()
   const [name, setName] = useState("")
   const [addedRecipes, setAddedRecipes] = useState<Recipe[]>([])
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: cooking?.name ?? "",
+      name: "",
     },
   })
   const recipes = api.recipe.search.useQuery({
@@ -51,16 +42,17 @@ export default function Cooking({ cooking }: { cooking?: Cooking }) {
   const utils = api.useUtils()
   const upsert = api.cooking.upsert.useMutation({
     onSuccess: async (response) => {
-      await utils.recipe.search.invalidate()
-      if (!cooking) {
-        router.push(`/cookings/${response}`)
-      }
+      await utils.cooking.search.invalidate()
+      router.push(`/cookings/${response}`)
       router.refresh()
     },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    upsert.mutate({
+      name: values.name,
+      recipes: addedRecipes,
+    })
   }
 
   return (
