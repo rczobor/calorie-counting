@@ -7,6 +7,7 @@ import {
   ingredients,
   recipes,
   recipeToIngredients,
+  usedIngredients,
 } from "@/server/db/schema"
 
 export const foodRouter = createTRPCRouter({
@@ -112,13 +113,48 @@ export const foodRouter = createTRPCRouter({
       })
     }),
 
+  insert: protectedProcedure
+    .input(
+      z.object({
+        cookingId: z.number(),
+        recipeId: z.number(),
+        name: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const food = await ctx.db.insert(foods).values({
+        cookingId: input.cookingId,
+        recipeId: input.recipeId,
+        name: input.name,
+      })
+
+      const ingredientIds = (
+        await ctx.db.query.recipeToIngredients.findMany({
+          where: eq(recipeToIngredients.recipeId, input.recipeId),
+        })
+      ).map((ingredient) => ingredient.ingredientId)
+      const ingredientsToAdd = await ctx.db.query.ingredients.findMany({
+        where: inArray(ingredients.id, ingredientIds),
+      })
+
+      for (const ingredient of ingredientsToAdd) {
+        await ctx.db.insert(usedIngredients).values({
+          foodId: +food.insertId,
+          name: ingredient.name,
+          calories: ingredient.calories,
+        })
+      }
+
+      return food.insertId
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.delete(recipes).where(eq(recipes.id, input.id))
       await ctx.db
-        .delete(recipeToIngredients)
-        .where(eq(recipeToIngredients.recipeId, input.id))
+        .delete(usedIngredients)
+        .where(eq(usedIngredients.foodId, input.id))
+      await ctx.db.delete(foods).where(eq(foods.id, input.id))
     }),
 
   getIngredients: protectedProcedure

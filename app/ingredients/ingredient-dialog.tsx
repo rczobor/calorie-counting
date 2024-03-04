@@ -69,7 +69,7 @@ export default function IngredientDialog({
         <Button>{ingredient ? "Edit" : "Create"}</Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Create Ingredient</DialogTitle>
+        <DialogTitle>{ingredient ? "Edit" : "Create"} Ingredient</DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex gap-4">

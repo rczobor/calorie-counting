@@ -10,7 +10,7 @@ import {
 } from "@/server/db/schema"
 
 export const cookingRouter = createTRPCRouter({
-  upsert: protectedProcedure
+  insert: protectedProcedure
     .input(
       z.object({
         name: z.string().min(2),
@@ -52,6 +52,20 @@ export const cookingRouter = createTRPCRouter({
       return query.insertId
     }),
 
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(cookings)
+        .set({ name: input.name })
+        .where(eq(cookings.id, input.id))
+    }),
+
   search: protectedProcedure
     .input(z.object({ name: z.string() }))
     .query(({ ctx, input }) => {
@@ -65,6 +79,21 @@ export const cookingRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      const relatedFoods = await ctx.db.query.foods.findMany({
+        where: eq(foods.cookingId, input.id),
+        with: { usedIngredients: true },
+      })
+      const relatedUsedIngredients = relatedFoods.flatMap(
+        (f) => f.usedIngredients,
+      )
+
+      await ctx.db.delete(usedIngredients).where(
+        inArray(
+          usedIngredients.id,
+          relatedUsedIngredients.map((i) => i.id),
+        ),
+      )
+      await ctx.db.delete(foods).where(eq(foods.cookingId, input.id))
       await ctx.db.delete(cookings).where(eq(cookings.id, input.id))
     }),
 

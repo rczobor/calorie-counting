@@ -1,6 +1,5 @@
 "use client"
 
-import RecipesTable from "@/app/recipes/recipes-table"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -11,14 +10,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { type Recipe } from "@/server/db/schema"
+import { type CookingWithFoodsWithUsedIngredients } from "@/server/db/schema"
 import { api } from "@/trpc/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import FoodsTable from "./foods-table"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -26,32 +25,29 @@ const formSchema = z.object({
   }),
 })
 
-export default function CreateCooking() {
+export default function EditCooking({
+  cooking,
+}: {
+  cooking: CookingWithFoodsWithUsedIngredients
+}) {
+  console.log(cooking)
   const router = useRouter()
-  const [name, setName] = useState("")
-  const [addedRecipes, setAddedRecipes] = useState<Recipe[]>([])
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-    },
-  })
-  const recipes = api.recipe.search.useQuery({
-    name,
+    defaultValues: { name: cooking.name },
   })
   const utils = api.useUtils()
-  const upsert = api.cooking.insert.useMutation({
-    onSuccess: async (response) => {
+  const update = api.cooking.update.useMutation({
+    onSuccess: async () => {
       await utils.cooking.search.invalidate()
-      router.push(`/cookings/${response}`)
       router.refresh()
     },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    upsert.mutate({
+    update.mutate({
+      id: cooking?.id,
       name: values.name,
-      recipes: addedRecipes,
     })
   }
 
@@ -70,8 +66,8 @@ export default function CreateCooking() {
                     <FormControl>
                       <Input placeholder="Name" {...field} />
                     </FormControl>
-                    <Button type="submit" disabled={upsert.isLoading}>
-                      {upsert.isLoading ? (
+                    <Button type="submit" disabled={update.isLoading}>
+                      {update.isLoading ? (
                         <>
                           <ReloadIcon className="mr-2 animate-spin" />
                           Please wait
@@ -88,39 +84,8 @@ export default function CreateCooking() {
           </div>
         </form>
       </Form>
-      <RecipesTable
-        variant="remove"
-        recipes={addedRecipes}
-        accordions
-        onRemove={(recipe) => {
-          setAddedRecipes(addedRecipes.filter((i) => i.id !== recipe.id))
-        }}
-      />
-      <section>
-        <h2 className="text-lg font-bold">Recipes</h2>
-        <div className="flex gap-4">
-          <Input
-            className="w-auto"
-            placeholder="Search by name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-          <Button onClick={() => router.push("/recipes/new")}>Create</Button>
-        </div>
-        <RecipesTable
-          variant="add"
-          recipes={
-            recipes.data?.filter(
-              (recipe) =>
-                !addedRecipes.some(
-                  (addedRecipe) => addedRecipe.id === recipe.id,
-                ),
-            ) ?? []
-          }
-          accordions
-          onAdd={(ingredient) => setAddedRecipes([...addedRecipes, ingredient])}
-        />
-      </section>
+
+      <FoodsTable foods={cooking.foods} />
     </div>
   )
 }

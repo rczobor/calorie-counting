@@ -120,7 +120,7 @@ export const ingredients = mysqlTable(
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).unique().notNull(),
-    calories: int("calories"),
+    calories: int("calories").notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -196,8 +196,8 @@ export const usedIngredients = mysqlTable(
   {
     id: serial("id").primaryKey(),
     foodId: int("foodId").notNull(),
-    name: varchar("name", { length: 256 }),
-    calories: int("calories"),
+    name: varchar("name", { length: 256 }).notNull(),
+    calories: int("calories").notNull(),
     quantity: int("quantity"),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
@@ -219,11 +219,13 @@ export const usedIngredientRelations = relations(
   }),
 )
 
+export type UsedIngredient = typeof usedIngredients.$inferSelect
+
 export const foods = mysqlTable(
   "food",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    name: varchar("name", { length: 256 }).notNull(),
     recipeId: int("recipeId").notNull(),
     cookingId: int("cookingId").notNull(),
     createdAt: timestamp("created_at")
@@ -239,7 +241,7 @@ export const foods = mysqlTable(
 export type Food = typeof foods.$inferSelect
 
 export type FoodWithUsedIngredients = typeof foods.$inferSelect & {
-  usedIngredients: (typeof usedIngredients.$inferSelect)[]
+  usedIngredients: UsedIngredient[]
 }
 
 export const foodRelations = relations(foods, ({ one, many }) => ({
@@ -258,7 +260,7 @@ export const cookings = mysqlTable(
   "cooking",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    name: varchar("name", { length: 256 }).notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -273,9 +275,7 @@ export type Cooking = typeof cookings.$inferSelect
 
 export type CookingWithFoodsWithUsedIngredients =
   typeof cookings.$inferSelect & {
-    foods: (typeof foods.$inferSelect & {
-      usedIngredients: (typeof usedIngredients.$inferSelect)[]
-    })[]
+    foods: FoodWithUsedIngredients[]
   }
 
 export const cookingRelations = relations(cookings, ({ many }) => ({
