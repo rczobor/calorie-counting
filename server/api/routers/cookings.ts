@@ -18,38 +18,52 @@ export const cookingRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const query = await ctx.db.insert(cookings).values({
-        name: input.name,
-      })
+      const [cooking] = await ctx.db
+        .insert(cookings)
+        .values({
+          name: input.name,
+          updatedAt: new Date(),
+        })
+        .returning()
+
+      if (!cooking) {
+        throw new Error("Created Cooking found")
+      }
 
       for (const recipe of input.recipes) {
-        const food = await ctx.db.insert(foods).values({
-          cookingId: +query.insertId,
-          recipeId: recipe.id,
-          name: recipe.name,
-        })
+        const [food] = await ctx.db
+          .insert(foods)
+          .values({
+            cookingId: cooking.id,
+            recipeId: recipe.id,
+            name: recipe.name,
+            updatedAt: new Date(),
+          })
+          .returning()
+
+        if (!food) {
+          throw new Error("Created Food not found")
+        }
 
         const recipeToIngredientsList =
           await ctx.db.query.recipeToIngredients.findMany({
             where: eq(recipeToIngredients.recipeId, recipe.id),
+            with: { ingredient: true },
           })
 
-        const ingredientIds = recipeToIngredientsList.map((r) => r.ingredientId)
-
-        const ingredients = await ctx.db.query.ingredients.findMany({
-          where: (ingredients) => inArray(ingredients.id, ingredientIds),
-        })
+        const ingredients = recipeToIngredientsList.map((r) => r.ingredient)
 
         for (const ingredient of ingredients) {
           await ctx.db.insert(usedIngredients).values({
-            foodId: +food.insertId,
+            foodId: food.id,
             name: ingredient.name,
             calories: ingredient.calories,
+            updatedAt: new Date(),
           })
         }
       }
 
-      return query.insertId
+      return cooking
     }),
 
   update: protectedProcedure

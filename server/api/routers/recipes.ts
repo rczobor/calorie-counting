@@ -1,4 +1,4 @@
-import { and, eq, inArray, like, not, sql } from "drizzle-orm"
+import { and, eq, inArray, like, not } from "drizzle-orm"
 import { z } from "zod"
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc"
@@ -9,29 +9,30 @@ export const recipeRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(2),
-        recipeId: z.number().optional(),
+        id: z.number().optional(),
         ingredientIds: z.array(z.number()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db
-        .insert(recipes)
-        .values({
-          id: input.recipeId,
-          name: input.name,
-        })
-        .onDuplicateKeyUpdate({
-          set: {
-            name: input.name,
-          },
-        })
-
-      const recipe = await ctx.db.query.recipes.findFirst({
-        where: eq(recipes.name, input.name),
-      })
+      const [recipe] = input.id
+        ? await ctx.db
+            .update(recipes)
+            .set({
+              name: input.name,
+              updatedAt: new Date(),
+            })
+            .where(eq(recipes.id, input.id))
+            .returning()
+        : await ctx.db
+            .insert(recipes)
+            .values({
+              name: input.name,
+              updatedAt: new Date(),
+            })
+            .returning()
 
       if (!recipe) {
-        throw new Error("not found")
+        throw new Error("Recipe not found")
       }
 
       if (input.ingredientIds.length > 0) {
@@ -45,13 +46,7 @@ export const recipeRouter = createTRPCRouter({
               ),
             ),
           )
-      } else {
-        await ctx.db
-          .delete(recipeToIngredients)
-          .where(eq(recipeToIngredients.recipeId, recipe.id))
-      }
 
-      if (input.ingredientIds.length > 0) {
         await ctx.db
           .insert(recipeToIngredients)
           .values(
@@ -60,12 +55,11 @@ export const recipeRouter = createTRPCRouter({
               ingredientId,
             })),
           )
-          .onDuplicateKeyUpdate({
-            set: {
-              recipeId: sql`recipeId`,
-              ingredientId: sql`ingredientId`,
-            },
-          })
+          .onConflictDoNothing()
+      } else {
+        await ctx.db
+          .delete(recipeToIngredients)
+          .where(eq(recipeToIngredients.recipeId, recipe.id))
       }
 
       return recipe

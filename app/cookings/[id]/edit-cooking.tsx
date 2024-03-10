@@ -30,7 +30,6 @@ export default function EditCooking({
 }: {
   cooking: CookingWithFoodsWithUsedIngredients
 }) {
-  console.log(cooking)
   const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

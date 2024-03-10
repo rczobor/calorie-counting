@@ -4,9 +4,10 @@ import { env } from "@/env.mjs"
 
 export default {
   schema: "./server/db/schema.ts",
-  driver: "mysql2",
+  driver: "pg",
+  out: "./drizzle",
   dbCredentials: {
-    uri: env.DATABASE_URL,
+    connectionString: env.DATABASE_URL,
   },
   tablesFilter: ["calorie-counting_*"],
 } satisfies Config

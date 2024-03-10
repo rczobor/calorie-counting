@@ -19,6 +19,7 @@ export const usedIngredientRouter = createTRPCRouter({
         name: input.name,
         calories: input.calories,
         quantity: input.quantity,
+        updatedAt: new Date(),
       }),
     ),
 

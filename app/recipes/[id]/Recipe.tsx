@@ -62,7 +62,7 @@ export default function Recipe({ recipe }: { recipe?: RecipeWithIngredient }) {
     upsert.mutate({
       name: values.name,
       ingredientIds: addedIngredients.map((ingredient) => ingredient.id),
-      recipeId: recipe?.id,
+      id: recipe?.id,
     })
   }
 

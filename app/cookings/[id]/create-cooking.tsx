@@ -41,9 +41,9 @@ export default function CreateCooking() {
   })
   const utils = api.useUtils()
   const upsert = api.cooking.insert.useMutation({
-    onSuccess: async (response) => {
+    onSuccess: async (cooking) => {
       await utils.cooking.search.invalidate()
-      router.push(`/cookings/${response}`)
+      router.push(`/cookings/${cooking.id}`)
       router.refresh()
     },
   })
