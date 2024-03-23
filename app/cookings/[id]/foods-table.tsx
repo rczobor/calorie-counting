@@ -28,10 +28,10 @@ const formSchema = z.object({
           name: z.string().min(2, {
             message: "Name must be at least 2 characters.",
           }),
-          calories: z.number().int().min(0, {
+          calories: z.coerce.number().int().min(0, {
             message: "Calories must be a positive number.",
           }),
-          quantity: z.number().int().min(0, {
+          quantity: z.coerce.number().int().min(0, {
             message: "Quantity must be a positive number.",
           }),
         }),
@@ -75,11 +75,12 @@ export default function FoodsTable({
       <h2>Foods</h2>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-10"
+        >
           {fields.map((field, index) => (
-            <div key={field.id} className="flex gap-2">
-              <FoodForm foodIndex={index} />
-            </div>
+            <FoodForm key={field.id} foodIndex={index} />
           ))}
           <Button type="submit">Submit</Button>
         </form>
@@ -96,7 +97,7 @@ function FoodForm({ foodIndex }: { foodIndex: number }) {
   })
 
   return (
-    <>
+    <div>
       <FormField
         control={form.control}
         name={`foods.${foodIndex}.name`}
@@ -117,7 +118,7 @@ function FoodForm({ foodIndex }: { foodIndex: number }) {
           ingredientIndex={index}
         />
       ))}
-    </>
+    </div>
   )
 }
 
@@ -131,7 +132,7 @@ function UsedIngredientForm({
   const form = useFormContext()
 
   return (
-    <>
+    <div className="flex">
       <FormField
         control={form.control}
         name={`foods.${foodIndex}.usedIngredients.${ingredientIndex}.name`}
@@ -171,6 +172,6 @@ function UsedIngredientForm({
           </FormItem>
         )}
       />
-    </>
+    </div>
   )
 }
