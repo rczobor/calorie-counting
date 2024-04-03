@@ -1,4 +1,4 @@
-import { eq, inArray, like } from "drizzle-orm"
+import { and, eq, like, notInArray } from "drizzle-orm"
 import { z } from "zod"
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
@@ -70,14 +70,108 @@ export const cookingRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.number(),
-        name: z.string(),
+        name: z.string().min(2),
+        foods: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string().min(2),
+            recipeId: z.number(),
+            usedIngredients: z.array(
+              z.object({
+                id: z.number(),
+                name: z.string().min(2),
+                calories: z.number().int().nonnegative(),
+                quantity: z.number().int().nonnegative(),
+              }),
+            ),
+          }),
+        ),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      await ctx.db
-        .update(cookings)
-        .set({ name: input.name })
-        .where(eq(cookings.id, input.id))
+    .mutation(({ ctx, input }) => {
+      const promises = []
+
+      promises.push(
+        ctx.db
+          .update(cookings)
+          .set({ name: input.name })
+          .where(eq(cookings.id, input.id)),
+      )
+
+      promises.push(
+        ctx.db.delete(foods).where(
+          and(
+            eq(foods.cookingId, input.id),
+            notInArray(
+              foods.id,
+              input.foods.map((i) => i.id),
+            ),
+          ),
+        ),
+      )
+
+      input.foods.forEach((food) => {
+        promises.push(
+          ctx.db.delete(usedIngredients).where(
+            and(
+              eq(usedIngredients.foodId, food.id),
+              notInArray(
+                usedIngredients.id,
+                food.usedIngredients.map((i) => i.id),
+              ),
+            ),
+          ),
+        )
+
+        if (food.id) {
+          promises.push(
+            ctx.db
+              .update(foods)
+              .set({
+                name: food.name,
+                updatedAt: new Date(),
+              })
+              .where(eq(foods.id, food.id)),
+          )
+        } else {
+          promises.push(
+            ctx.db.insert(foods).values({
+              cookingId: input.id,
+              recipeId: food.recipeId,
+              name: food.name,
+              updatedAt: new Date(),
+            }),
+          )
+        }
+
+        food.usedIngredients.forEach((ingredient) => {
+          if (ingredient.id) {
+            promises.push(
+              ctx.db
+                .update(usedIngredients)
+                .set({
+                  name: ingredient.name,
+                  calories: ingredient.calories,
+                  quantity: ingredient.quantity,
+                  updatedAt: new Date(),
+                })
+                .where(eq(usedIngredients.id, ingredient.id)),
+            )
+          } else {
+            promises.push(
+              ctx.db.insert(usedIngredients).values({
+                foodId: food.id,
+                name: ingredient.name,
+                calories: ingredient.calories,
+                quantity: ingredient.quantity,
+                updatedAt: new Date(),
+              }),
+            )
+          }
+        })
+      })
+
+      return Promise.all(promises)
     }),
 
   search: protectedProcedure
@@ -92,24 +186,9 @@ export const cookingRouter = createTRPCRouter({
 
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const relatedFoods = await ctx.db.query.foods.findMany({
-        where: eq(foods.cookingId, input.id),
-        with: { usedIngredients: true },
-      })
-      const relatedUsedIngredients = relatedFoods.flatMap(
-        (f) => f.usedIngredients,
-      )
-
-      await ctx.db.delete(usedIngredients).where(
-        inArray(
-          usedIngredients.id,
-          relatedUsedIngredients.map((i) => i.id),
-        ),
-      )
-      await ctx.db.delete(foods).where(eq(foods.cookingId, input.id))
-      await ctx.db.delete(cookings).where(eq(cookings.id, input.id))
-    }),
+    .mutation(async ({ ctx, input }) =>
+      ctx.db.delete(cookings).where(eq(cookings.id, input.id)),
+    ),
 
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
@@ -117,7 +196,16 @@ export const cookingRouter = createTRPCRouter({
       return ctx.db.query.cookings.findFirst({
         where: eq(cookings.id, input.id),
         with: {
-          foods: { with: { usedIngredients: true } },
+          foods: {
+            with: {
+              usedIngredients: {
+                orderBy: (usedIngredients, { desc }) => [
+                  desc(usedIngredients.createdAt),
+                ],
+              },
+            },
+            orderBy: (foods, { desc }) => [desc(foods.createdAt)],
+          },
         },
       })
     }),

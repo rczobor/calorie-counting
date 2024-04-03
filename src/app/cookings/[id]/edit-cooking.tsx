@@ -20,10 +20,36 @@ import { z } from "zod"
 import FoodsTable from "./foods-table"
 
 const formSchema = z.object({
+  id: z.number().int(),
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
+  foods: z.array(
+    z.object({
+      id: z.number().int(),
+      recipeId: z.number(),
+      name: z.string().min(2, {
+        message: "Name must be at least 2 characters.",
+      }),
+      usedIngredients: z.array(
+        z.object({
+          id: z.number().int(),
+          name: z.string().min(2, {
+            message: "Name must be at least 2 characters.",
+          }),
+          calories: z.coerce.number().int().min(0, {
+            message: "Calories must be a positive number.",
+          }),
+          quantity: z.coerce.number().int().min(0, {
+            message: "Quantity must be a positive number.",
+          }),
+        }),
+      ),
+    }),
+  ),
 })
+
+export type CookingFormValues = z.infer<typeof formSchema>
 
 export default function EditCooking({
   cooking,
@@ -31,9 +57,23 @@ export default function EditCooking({
   cooking: CookingWithFoodsWithUsedIngredients
 }) {
   const router = useRouter()
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<CookingFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: cooking.name },
+    defaultValues: {
+      id: cooking.id,
+      name: cooking.name,
+      foods: cooking.foods.map((food) => ({
+        id: food.id,
+        name: food.name,
+        recipeId: food.recipeId,
+        usedIngredients: food.usedIngredients.map((ingredient) => ({
+          id: ingredient.id,
+          name: ingredient.name,
+          calories: ingredient.calories,
+          quantity: ingredient.quantity ?? 0,
+        })),
+      })),
+    },
   })
   const utils = api.useUtils()
   const update = api.cooking.update.useMutation({
@@ -43,11 +83,8 @@ export default function EditCooking({
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    update.mutate({
-      id: cooking?.id,
-      name: values.name,
-    })
+  function onSubmit(values: CookingFormValues) {
+    update.mutate(values)
   }
 
   return (
@@ -81,10 +118,9 @@ export default function EditCooking({
               )}
             />
           </div>
+          <FoodsTable />
         </form>
       </Form>
-
-      <FoodsTable foods={cooking.foods} />
     </div>
   )
 }

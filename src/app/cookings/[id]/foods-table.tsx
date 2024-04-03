@@ -1,8 +1,6 @@
 "use client"
 
-import { Button } from "~/components/ui/button"
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -10,87 +8,30 @@ import {
   FormMessage,
 } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
-import { type FoodWithUsedIngredients } from "~/server/db/schema"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm, useFormContext } from "react-hook-form"
-import { z } from "zod"
+import { useFieldArray, useFormContext } from "react-hook-form"
+import { type CookingFormValues } from "./edit-cooking"
 
-const formSchema = z.object({
-  foods: z.array(
-    z.object({
-      name: z.string().min(2, {
-        message: "Name must be at least 2 characters.",
-      }),
-      id: z.number().int(),
-      usedIngredients: z.array(
-        z.object({
-          id: z.number().int(),
-          name: z.string().min(2, {
-            message: "Name must be at least 2 characters.",
-          }),
-          calories: z.coerce.number().int().min(0, {
-            message: "Calories must be a positive number.",
-          }),
-          quantity: z.coerce.number().int().min(0, {
-            message: "Quantity must be a positive number.",
-          }),
-        }),
-      ),
-    }),
-  ),
-})
-
-export default function FoodsTable({
-  foods,
-}: {
-  foods: FoodWithUsedIngredients[]
-}) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      foods: foods.map((food) => ({
-        id: food.id,
-        name: food.name,
-        usedIngredients: food.usedIngredients.map((ingredient) => ({
-          id: ingredient.id,
-          name: ingredient.name,
-          calories: ingredient.calories,
-          quantity: ingredient.quantity ?? 0,
-        })),
-      })),
-    },
-  })
+export default function FoodsTable() {
+  const form = useFormContext<CookingFormValues>()
 
   const { fields } = useFieldArray({
     control: form.control,
     name: "foods",
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-  }
-
   return (
     <section>
       <h2>Foods</h2>
 
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-10"
-        >
-          {fields.map((field, index) => (
-            <FoodForm key={field.id} foodIndex={index} />
-          ))}
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
+      {fields.map((field, index) => (
+        <FoodForm key={field.id} foodIndex={index} />
+      ))}
     </section>
   )
 }
 
 function FoodForm({ foodIndex }: { foodIndex: number }) {
-  const form = useFormContext<z.infer<typeof formSchema>>()
+  const form = useFormContext<CookingFormValues>()
   const { fields } = useFieldArray({
     control: form.control,
     name: `foods.${foodIndex}.usedIngredients`,
@@ -129,7 +70,7 @@ function UsedIngredientForm({
   foodIndex: number
   ingredientIndex: number
 }) {
-  const form = useFormContext()
+  const form = useFormContext<CookingFormValues>()
 
   return (
     <div className="flex">
