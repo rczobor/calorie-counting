@@ -13,6 +13,7 @@ import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import { type CookingFormValues } from "./edit-cooking"
 import { Button } from "~/components/ui/button"
 import { useEffect } from "react"
+import { Separator } from "~/components/ui/separator"
 
 export default function FoodsTable() {
   const form = useFormContext<CookingFormValues>()
@@ -31,6 +32,7 @@ export default function FoodsTable() {
           removeFood={() => remove(index)}
         />
       ))}
+
       <FormField
         control={form.control}
         name={"foods"}
@@ -73,6 +75,8 @@ function FoodForm({
 
   return (
     <>
+      <Separator />
+
       <div className="flex items-end gap-4">
         <FormField
           control={form.control}
