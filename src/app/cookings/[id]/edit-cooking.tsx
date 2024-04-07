@@ -24,29 +24,37 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  foods: z.array(
-    z.object({
-      id: z.number().int(),
-      recipeId: z.number(),
-      name: z.string().min(2, {
-        message: "Name must be at least 2 characters.",
-      }),
-      usedIngredients: z.array(
-        z.object({
-          id: z.number().int(),
-          name: z.string().min(2, {
-            message: "Name must be at least 2 characters.",
-          }),
-          calories: z.coerce.number().int().min(0, {
-            message: "Calories must be a positive number.",
-          }),
-          quantity: z.coerce.number().int().min(0, {
-            message: "Quantity must be a positive number.",
-          }),
+  foods: z
+    .array(
+      z.object({
+        id: z.number().int(),
+        recipeId: z.number(),
+        name: z.string().min(2, {
+          message: "Name must be at least 2 characters.",
         }),
-      ),
+        usedIngredients: z
+          .array(
+            z.object({
+              id: z.number().int(),
+              name: z.string().min(2, {
+                message: "Name must be at least 2 characters.",
+              }),
+              calories: z.coerce.number().int().min(0, {
+                message: "Calories must be a positive number.",
+              }),
+              quantity: z.coerce.number().int().min(0, {
+                message: "Quantity must be a positive number.",
+              }),
+            }),
+          )
+          .min(1, {
+            message: "You must have at least one ingredient.",
+          }),
+      }),
+    )
+    .min(1, {
+      message: "You must have at least one food.",
     }),
-  ),
 })
 
 export type CookingFormValues = z.infer<typeof formSchema>
@@ -59,21 +67,7 @@ export default function EditCooking({
   const router = useRouter()
   const form = useForm<CookingFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      id: cooking.id,
-      name: cooking.name,
-      foods: cooking.foods.map((food) => ({
-        id: food.id,
-        name: food.name,
-        recipeId: food.recipeId,
-        usedIngredients: food.usedIngredients.map((ingredient) => ({
-          id: ingredient.id,
-          name: ingredient.name,
-          calories: ingredient.calories,
-          quantity: ingredient.quantity ?? 0,
-        })),
-      })),
-    },
+    defaultValues: cooking,
   })
   const utils = api.useUtils()
   const update = api.cooking.update.useMutation({
@@ -88,39 +82,55 @@ export default function EditCooking({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex gap-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <div className="flex gap-4">
-                    <FormControl>
-                      <Input placeholder="Name" {...field} />
-                    </FormControl>
-                    <Button type="submit" disabled={update.isPending}>
-                      {update.isPending ? (
-                        <>
-                          <ReloadIcon className="mr-2 animate-spin" />
-                          Please wait
-                        </>
-                      ) : (
-                        <>Save</>
-                      )}
-                    </Button>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FoodsTable />
-        </form>
-      </Form>
-    </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cooking name</FormLabel>
+                <div className="flex gap-4">
+                  <FormControl>
+                    <Input placeholder="Name" {...field} />
+                  </FormControl>
+                  <Button type="submit" disabled={update.isPending}>
+                    {update.isPending ? (
+                      <>
+                        <ReloadIcon className="mr-2 animate-spin" />
+                        Please wait
+                      </>
+                    ) : (
+                      <>Save</>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={update.isPending}
+                    onClick={() => form.reset(cooking)}
+                  >
+                    {update.isPending ? (
+                      <>
+                        <ReloadIcon className="mr-2 animate-spin" />
+                        Please wait
+                      </>
+                    ) : (
+                      <>Reset</>
+                    )}
+                  </Button>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="p-2" />
+
+        <FoodsTable />
+      </form>
+    </Form>
   )
 }

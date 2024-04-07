@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  FormArrayMessage,
   FormControl,
   FormField,
   FormItem,
@@ -10,78 +11,117 @@ import {
 import { Input } from "~/components/ui/input"
 import { useFieldArray, useFormContext } from "react-hook-form"
 import { type CookingFormValues } from "./edit-cooking"
+import { Button } from "~/components/ui/button"
 
 export default function FoodsTable() {
   const form = useFormContext<CookingFormValues>()
 
-  const { fields } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control: form.control,
     name: "foods",
   })
 
   return (
-    <section>
-      <h2>Foods</h2>
-
+    <section className="flex flex-col gap-4">
       {fields.map((field, index) => (
-        <FoodForm key={field.id} foodIndex={index} />
+        <FoodForm
+          key={field.id}
+          foodIndex={index}
+          removeFood={() => remove(index)}
+        />
       ))}
+      <FormField
+        control={form.control}
+        name={"foods"}
+        render={() => (
+          <FormItem>
+            <FormArrayMessage />
+          </FormItem>
+        )}
+      />
     </section>
   )
 }
 
-function FoodForm({ foodIndex }: { foodIndex: number }) {
+function FoodForm({
+  foodIndex,
+  removeFood,
+}: {
+  foodIndex: number
+  removeFood: () => void
+}) {
   const form = useFormContext<CookingFormValues>()
-  const { fields } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control: form.control,
     name: `foods.${foodIndex}.usedIngredients`,
   })
 
   return (
-    <div>
-      <FormField
-        control={form.control}
-        name={`foods.${foodIndex}.name`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>name</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+    <>
+      <div className="flex">
+        <FormField
+          control={form.control}
+          name={`foods.${foodIndex}.name`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Food name</FormLabel>
+              <FormControl>
+                <div className="flex gap-4">
+                  <Input placeholder="Food name" {...field} />
+                  <Button variant="destructive" onClick={removeFood}>
+                    Delete
+                  </Button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
       {fields.map((field, index) => (
         <UsedIngredientForm
           key={field.id}
           foodIndex={foodIndex}
           ingredientIndex={index}
+          removeIngredient={() => remove(index)}
         />
       ))}
-    </div>
+
+      <FormField
+        control={form.control}
+        name={`foods.${foodIndex}.usedIngredients`}
+        render={() => (
+          <FormItem>
+            <FormArrayMessage />
+          </FormItem>
+        )}
+      />
+    </>
   )
 }
 
 function UsedIngredientForm({
   foodIndex,
   ingredientIndex,
+  removeIngredient,
 }: {
   foodIndex: number
   ingredientIndex: number
+  removeIngredient: () => void
 }) {
   const form = useFormContext<CookingFormValues>()
 
   return (
-    <div className="flex">
+    <div className="flex items-end gap-4">
       <FormField
         control={form.control}
         name={`foods.${foodIndex}.usedIngredients.${ingredientIndex}.name`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>name</FormLabel>
+            <FormLabel>Ingredient name</FormLabel>
             <FormControl>
-              <Input {...field} />
+              <Input placeholder="Ingredient name" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -113,6 +153,10 @@ function UsedIngredientForm({
           </FormItem>
         )}
       />
+
+      <Button variant="destructive" onClick={removeIngredient}>
+        Delete
+      </Button>
     </div>
   )
 }

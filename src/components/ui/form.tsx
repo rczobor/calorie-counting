@@ -164,6 +164,30 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = "FormMessage"
 
+const FormArrayMessage = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, children, ...props }, ref) => {
+  const { error, formMessageId } = useFormField()
+  const body = error ? error?.root?.message : children
+
+  if (!body) {
+    return null
+  }
+
+  return (
+    <p
+      ref={ref}
+      id={formMessageId}
+      className={cn("text-[0.8rem] font-medium text-destructive", className)}
+      {...props}
+    >
+      {String(body)}
+    </p>
+  )
+})
+FormArrayMessage.displayName = "FormArrayMessage"
+
 export {
   useFormField,
   Form,
@@ -173,4 +197,5 @@ export {
   FormDescription,
   FormMessage,
   FormField,
+  FormArrayMessage,
 }
