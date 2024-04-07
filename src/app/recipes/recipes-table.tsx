@@ -62,7 +62,10 @@ export default function RecipesTable({
                 <TableCell>{recipe.id}</TableCell>
                 <TableCell>{recipe.name}</TableCell>
                 <TableCell className="flex gap-4">
-                  <Button onClick={() => router.push(`/recipes/${recipe.id}`)}>
+                  <Button
+                    type="button"
+                    onClick={() => router.push(`/recipes/${recipe.id}`)}
+                  >
                     Edit
                   </Button>
                   {variant === "default" && (
@@ -72,6 +75,7 @@ export default function RecipesTable({
                   )}
                   {variant === "add" && (
                     <Button
+                      type="button"
                       onClick={() => {
                         onAdd?.(recipe)
                       }}
@@ -81,6 +85,7 @@ export default function RecipesTable({
                   )}
                   {variant === "remove" && (
                     <Button
+                      type="button"
                       onClick={() => {
                         onRemove?.(recipe)
                       }}
@@ -90,7 +95,7 @@ export default function RecipesTable({
                   )}
                   {accordions && (
                     <CollapsibleTrigger asChild>
-                      <Button>Open</Button>
+                      <Button type="button">Open</Button>
                     </CollapsibleTrigger>
                   )}
                 </TableCell>

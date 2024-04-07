@@ -12,13 +12,21 @@ import { Input } from "~/components/ui/input"
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import { type CookingFormValues } from "./edit-cooking"
 import { Button } from "~/components/ui/button"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Separator } from "~/components/ui/separator"
+import { api } from "~/trpc/react"
+import RecipesTable from "~/app/recipes/recipes-table"
 
 export default function FoodsTable() {
   const form = useFormContext<CookingFormValues>()
+  const [recipeSearch, setRecipeSearch] = useState("")
+  const recipes = api.recipe.search.useQuery({
+    name: recipeSearch,
+  })
+  const { mutateAsync: getIngredients } =
+    api.recipe.getIngredientsMutation.useMutation()
 
-  const { fields, remove } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control: form.control,
     name: "foods",
   })
@@ -29,7 +37,7 @@ export default function FoodsTable() {
         <FoodForm
           key={field.id}
           foodIndex={index}
-          removeFood={() => remove(index)}
+          removeFood={async () => remove(index)}
         />
       ))}
 
@@ -42,6 +50,48 @@ export default function FoodsTable() {
           </FormItem>
         )}
       />
+
+      <section>
+        <h2 className="text-lg font-bold">Recipes</h2>
+        <div className="flex gap-4">
+          <Input
+            className="w-auto"
+            placeholder="Search by name"
+            value={recipeSearch}
+            onChange={(event) => setRecipeSearch(event.target.value)}
+          />
+        </div>
+        <RecipesTable
+          variant="add"
+          recipes={
+            recipes.data?.filter(
+              (recipe) =>
+                !fields.some(
+                  (addedRecipe) => addedRecipe.recipeId === recipe.id,
+                ),
+            ) ?? []
+          }
+          accordions
+          onAdd={async (recipe) => {
+            const ingredients = await getIngredients({ id: recipe.id })
+
+            append({
+              id: Infinity,
+              name: recipe.name,
+              recipeId: recipe.id,
+              quantity: 0,
+              usedIngredients: ingredients.map((ingredient) => ({
+                id: ingredient.id,
+                name: ingredient.name,
+                calories: ingredient.calories,
+                quantity: 0,
+              })),
+            })
+
+            await form.trigger()
+          }}
+        />
+      </section>
     </section>
   )
 }
@@ -80,10 +130,10 @@ function FoodForm({
       <div className="flex items-end gap-4">
         <FormField
           control={form.control}
-          name={`foods.${foodIndex}.name`}
+          name={`foods.${foodIndex}.quantity`}
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Food name</FormLabel>
+            <FormItem className="max-w-24">
+              <FormLabel>Quantity</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -94,14 +144,10 @@ function FoodForm({
 
         <FormField
           control={form.control}
-          name={`foods.${foodIndex}.quantity`}
+          name={`foods.${foodIndex}.name`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Quantity</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
+              <div>{field.value}</div>
             </FormItem>
           )}
         />

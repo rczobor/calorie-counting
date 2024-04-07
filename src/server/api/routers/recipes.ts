@@ -115,6 +115,23 @@ export const recipeRouter = createTRPCRouter({
 
       const ingredientIds = relations.map((relation) => relation.ingredientId)
 
+      console.log(ingredientIds)
+      return ctx.db.query.ingredients.findMany({
+        where: inArray(ingredients.id, ingredientIds),
+      })
+    }),
+
+  getIngredientsMutation: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const relations = await ctx.db.query.recipeToIngredients.findMany({
+        where: eq(recipeToIngredients.recipeId, input.id),
+      })
+
+      if (!relations.length) return []
+
+      const ingredientIds = relations.map((relation) => relation.ingredientId)
+
       return ctx.db.query.ingredients.findMany({
         where: inArray(ingredients.id, ingredientIds),
       })
