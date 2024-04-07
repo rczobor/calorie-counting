@@ -32,6 +32,9 @@ const formSchema = z.object({
         name: z.string().min(2, {
           message: "Name must be at least 2 characters.",
         }),
+        quantity: z.coerce.number().int().min(0, {
+          message: "Quantity must be a positive number.",
+        }),
         usedIngredients: z
           .array(
             z.object({

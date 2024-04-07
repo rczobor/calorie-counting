@@ -202,9 +202,10 @@ export const foods = createTable(
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
+    quantity: integer("quantity").default(0).notNull(),
     recipeId: integer("recipeId")
       .notNull()
-      .references(() => recipes.id, { onDelete: "cascade" }),
+      .references(() => recipes.id),
     cookingId: integer("cookingId")
       .notNull()
       .references(() => cookings.id, { onDelete: "cascade" }),

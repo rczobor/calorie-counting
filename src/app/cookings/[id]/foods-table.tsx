@@ -9,9 +9,10 @@ import {
   FormMessage,
 } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
-import { useFieldArray, useFormContext } from "react-hook-form"
+import { useFieldArray, useFormContext, useWatch } from "react-hook-form"
 import { type CookingFormValues } from "./edit-cooking"
 import { Button } from "~/components/ui/button"
+import { useEffect } from "react"
 
 export default function FoodsTable() {
   const form = useFormContext<CookingFormValues>()
@@ -55,10 +56,24 @@ function FoodForm({
     control: form.control,
     name: `foods.${foodIndex}.usedIngredients`,
   })
+  const ingredients = useWatch({
+    control: form.control,
+    name: `foods.${foodIndex}.usedIngredients`,
+  })
+  const quantity = useWatch({
+    control: form.control,
+    name: `foods.${foodIndex}.quantity`,
+  })
+  const totalCalories = ingredients.reduce(
+    (acc, ingredient) =>
+      acc + Math.round(ingredient.calories * (ingredient.quantity / 100)),
+    0 as number,
+  )
+  const calories = Math.round(totalCalories / (quantity / 100))
 
   return (
     <>
-      <div className="flex">
+      <div className="flex items-end gap-4">
         <FormField
           control={form.control}
           name={`foods.${foodIndex}.name`}
@@ -66,17 +81,36 @@ function FoodForm({
             <FormItem>
               <FormLabel>Food name</FormLabel>
               <FormControl>
-                <div className="flex gap-4">
-                  <Input placeholder="Food name" {...field} />
-                  <Button variant="destructive" onClick={removeFood}>
-                    Delete
-                  </Button>
-                </div>
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name={`foods.${foodIndex}.quantity`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Quantity</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button variant="destructive" onClick={removeFood}>
+          Delete
+        </Button>
+
+        {!!quantity && (
+          <div>
+            {totalCalories} / {quantity} = {calories}
+          </div>
+        )}
       </div>
 
       {fields.map((field, index) => (
@@ -111,6 +145,26 @@ function UsedIngredientForm({
   removeIngredient: () => void
 }) {
   const form = useFormContext<CookingFormValues>()
+  const ingredient = useWatch({
+    control: form.control,
+    name: `foods.${foodIndex}.usedIngredients.${ingredientIndex}`,
+  })
+  const totalCalories = Math.round(
+    ingredient.calories * (ingredient.quantity / 100),
+  )
+
+  useEffect(() => {
+    const ingredients = form.watch(`foods.${foodIndex}.usedIngredients`)
+
+    form.setValue(
+      `foods.${foodIndex}.quantity`,
+      ingredients.reduce(
+        (acc, ingredient) => acc + Number(ingredient.quantity),
+        0 as number,
+      ),
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ingredient.quantity])
 
   return (
     <div className="flex items-end gap-4">
@@ -121,18 +175,19 @@ function UsedIngredientForm({
           <FormItem>
             <FormLabel>Ingredient name</FormLabel>
             <FormControl>
-              <Input placeholder="Ingredient name" {...field} />
+              <Input {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
+
       <FormField
         control={form.control}
         name={`foods.${foodIndex}.usedIngredients.${ingredientIndex}.calories`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Calories</FormLabel>
+            <FormLabel>Calories/100</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -140,6 +195,7 @@ function UsedIngredientForm({
           </FormItem>
         )}
       />
+
       <FormField
         control={form.control}
         name={`foods.${foodIndex}.usedIngredients.${ingredientIndex}.quantity`}
@@ -157,6 +213,8 @@ function UsedIngredientForm({
       <Button variant="destructive" onClick={removeIngredient}>
         Delete
       </Button>
+
+      <div>{totalCalories} Calories</div>
     </div>
   )
 }
