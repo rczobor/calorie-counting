@@ -36,9 +36,11 @@ const formSchema = z.object({
 
 export default function IngredientDialog({
   ingredient,
+  callUpsert = true,
   onAdd,
 }: {
   ingredient?: Ingredient
+  callUpsert?: boolean
   onAdd?: (ingredient: Ingredient) => void
 }) {
   const [open, setOpen] = useState(false)
@@ -60,6 +62,16 @@ export default function IngredientDialog({
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!callUpsert) {
+      onAdd?.({
+        ...values,
+        id: Infinity,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      setOpen(false)
+      return
+    }
     upsert.mutate({ ...values, id: ingredient?.id })
   }
 
