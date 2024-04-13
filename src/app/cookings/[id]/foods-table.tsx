@@ -17,7 +17,6 @@ export default function FoodsTable() {
   })
   const { mutateAsync: getIngredients } =
     api.recipe.getIngredientsMutation.useMutation()
-
   const { fields, remove, append } = useFieldArray({
     control: form.control,
     name: "foods",

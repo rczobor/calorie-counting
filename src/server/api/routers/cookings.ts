@@ -91,6 +91,8 @@ export const cookingRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // TODO add multiple foods only adds first one
+
       await ctx.db
         .update(cookings)
         .set({ name: input.name, updatedAt: new Date() })
