@@ -119,6 +119,7 @@ export default function Recipe({ recipe }: { recipe?: RecipeWithIngredient }) {
           onChange={(event) => setName(event.target.value)}
         />
         <IngredientDialog
+          callUpsert={true}
           onAdd={(ingredient) =>
             setAddedIngredients([...addedIngredients, ingredient])
           }

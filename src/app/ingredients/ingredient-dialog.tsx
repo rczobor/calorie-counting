@@ -36,7 +36,7 @@ const formSchema = z.object({
 
 export default function IngredientDialog({
   ingredient,
-  callUpsert = true,
+  callUpsert = false,
   onAdd,
 }: {
   ingredient?: Ingredient
@@ -78,7 +78,7 @@ export default function IngredientDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>{ingredient ? "Edit" : "Create"}</Button>
+        <Button type="button">{ingredient ? "Edit" : "Create"}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>{ingredient ? "Edit" : "Create"} Ingredient</DialogTitle>

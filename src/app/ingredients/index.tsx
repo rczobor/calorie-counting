@@ -21,7 +21,7 @@ export default function Ingredients() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <IngredientDialog />
+        <IngredientDialog callUpsert={true} />
       </div>
       {ingredients.data && <IngredientsTable ingredients={ingredients.data} />}
     </>

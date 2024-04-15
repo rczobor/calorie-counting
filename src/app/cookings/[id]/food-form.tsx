@@ -1,5 +1,3 @@
-"use client"
-
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form"
 import { Button } from "~/components/ui/button"
 import {
@@ -14,6 +12,7 @@ import { Input } from "~/components/ui/input"
 import { type CookingFormValues } from "./edit-cooking"
 import { Separator } from "~/components/ui/separator"
 import UsedIngredientForm from "./used-ingredient-form"
+import IngredientDialog from "~/app/ingredients/ingredient-dialog"
 
 export default function FoodForm({
   foodIndex,
@@ -30,6 +29,10 @@ export default function FoodForm({
   const ingredients = useWatch({
     control: form.control,
     name: `foods.${foodIndex}.usedIngredients`,
+  })
+  const name = useWatch({
+    control: form.control,
+    name: `foods.${foodIndex}.name`,
   })
   const quantity = useWatch({
     control: form.control,
@@ -61,19 +64,15 @@ export default function FoodForm({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name={`foods.${foodIndex}.name`}
-          render={({ field }) => (
-            <FormItem>
-              <div>{field.value}</div>
-            </FormItem>
-          )}
-        />
+        <IngredientDialog onAdd={console.log} />
 
         <Button variant="destructive" onClick={removeFood}>
           Delete
         </Button>
+
+        <h3>{name}</h3>
+
+        <div>|</div>
 
         {!!quantity && (
           <div>
