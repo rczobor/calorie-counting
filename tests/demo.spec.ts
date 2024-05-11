@@ -9,12 +9,16 @@ test("demo test", async ({ page }) => {
     .locator('input[name="foods\\.0\\.usedIngredients\\.0\\.calories"]')
     .fill("30")
   await page.getByRole("button", { name: "Save" }).click()
-  await page.goto("http://localhost:3000/cookings/5")
+
+  await page.goto("/cookings/5")
+
   await page.locator('[id="\\:R4mnkvffacq\\:-form-item"]').fill("15")
   await page.getByRole("button", { name: "Save" }).click()
   await page.getByRole("link", { name: "Cookings" }).click()
+
+  await page.waitForURL("/cookings")
+
   await page.getByRole("button", { name: "Edit" }).first().click()
-  await expect(page.locator('[id="\\:R4mnkvffacq\\:-form-item"]')).toHaveValue(
-    "15",
-  )
+
+  await expect(page.locator('[id="\\:re\\:-form-item"]')).toHaveValue("15")
 })
