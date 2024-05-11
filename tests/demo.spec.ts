@@ -4,6 +4,9 @@ test("demo test", async ({ page }) => {
   await page.goto("/")
 
   await page.getByRole("link", { name: "Cookings" }).click()
+
+  await page.waitForURL("/cookings")
+
   await page.getByRole("button", { name: "Edit" }).first().click()
   await page
     .locator('input[name="foods\\.0\\.usedIngredients\\.0\\.calories"]')
