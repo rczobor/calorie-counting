@@ -1,4 +1,6 @@
-import { useEffect } from "react"
+"use client"
+
+import { useEffect, useState } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 import { Button } from "~/components/ui/button"
 import {
@@ -28,9 +30,15 @@ export default function UsedIngredientForm({
   const totalCalories = Math.round(
     ingredient.calories * (ingredient.quantity / 100),
   )
+  const [isFirstRender, setIsFirstRender] = useState(true)
 
   useEffect(() => {
     const ingredients = form.watch(`foods.${foodIndex}.usedIngredients`)
+
+    if (isFirstRender && form.getValues(`foods.${foodIndex}.quantity`)) {
+      setIsFirstRender(false)
+      return
+    }
 
     form.setValue(
       `foods.${foodIndex}.quantity`,

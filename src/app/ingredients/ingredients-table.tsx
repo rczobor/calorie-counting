@@ -55,7 +55,7 @@ export default function IngredientsTable({
             <TableCell>{ingredient.name}</TableCell>
             <TableCell>{ingredient.calories?.toString()}</TableCell>
             <TableCell className="flex gap-4">
-              <IngredientDialog ingredient={ingredient} />
+              <IngredientDialog ingredient={ingredient} callUpsert={true} />
               {variant === "default" && (
                 <ConfirmDelete
                   onConfirm={() =>

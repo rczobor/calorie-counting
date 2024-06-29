@@ -73,12 +73,14 @@ export const cookingRouter = createTRPCRouter({
         name: z.string().min(2),
         foods: z.array(
           z.object({
-            id: z.number(),
+            id: z.number().nullable(),
             name: z.string().min(2),
+            quantity: z.number().int().nonnegative(),
             recipeId: z.number(),
             usedIngredients: z.array(
               z.object({
-                id: z.number(),
+                id: z.number().nullable(),
+                foodId: z.number().nullable(),
                 name: z.string().min(2),
                 calories: z.number().int().nonnegative(),
                 quantity: z.number().int().nonnegative(),
@@ -88,90 +90,106 @@ export const cookingRouter = createTRPCRouter({
         ),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      const promises = []
+    .mutation(async ({ ctx, input }) => {
+      // TODO add multiple foods only adds first one
 
-      promises.push(
-        ctx.db
-          .update(cookings)
-          .set({ name: input.name })
-          .where(eq(cookings.id, input.id)),
-      )
+      await ctx.db
+        .update(cookings)
+        .set({ name: input.name, updatedAt: new Date() })
+        .where(eq(cookings.id, input.id))
 
-      promises.push(
-        ctx.db.delete(foods).where(
-          and(
-            eq(foods.cookingId, input.id),
-            notInArray(
-              foods.id,
-              input.foods.map((i) => i.id),
-            ),
+      await ctx.db.delete(foods).where(
+        and(
+          eq(foods.cookingId, input.id),
+          notInArray(
+            foods.id,
+            input.foods.reduce((ids, food) => {
+              if (food.id) {
+                ids.push(food.id)
+              }
+
+              return ids
+            }, [] as number[]),
           ),
         ),
       )
 
-      input.foods.forEach((food) => {
-        promises.push(
-          ctx.db.delete(usedIngredients).where(
+      for (const food of input.foods) {
+        if (food.id) {
+          await ctx.db.delete(usedIngredients).where(
             and(
               eq(usedIngredients.foodId, food.id),
               notInArray(
                 usedIngredients.id,
-                food.usedIngredients.map((i) => i.id),
+                food.usedIngredients.reduce((ids, food) => {
+                  if (food.id) {
+                    ids.push(food.id)
+                  }
+
+                  return ids
+                }, [] as number[]),
               ),
             ),
-          ),
-        )
-
-        if (food.id) {
-          promises.push(
-            ctx.db
-              .update(foods)
-              .set({
-                name: food.name,
-                updatedAt: new Date(),
-              })
-              .where(eq(foods.id, food.id)),
           )
+          await ctx.db
+            .update(foods)
+            .set({
+              name: food.name,
+              quantity: food.quantity,
+              updatedAt: new Date(),
+            })
+            .where(eq(foods.id, food.id))
         } else {
-          promises.push(
-            ctx.db.insert(foods).values({
+          const [newFood] = await ctx.db
+            .insert(foods)
+            .values({
               cookingId: input.id,
               recipeId: food.recipeId,
               name: food.name,
+              quantity: food.quantity,
               updatedAt: new Date(),
-            }),
-          )
+            })
+            .returning()
+
+          if (!newFood) {
+            throw new Error("New Food not found")
+          }
+
+          for (const ingredient of food.usedIngredients) {
+            await ctx.db.insert(usedIngredients).values({
+              foodId: newFood.id,
+              name: ingredient.name,
+              calories: ingredient.calories,
+              quantity: ingredient.quantity,
+              updatedAt: new Date(),
+            })
+          }
+
+          return
         }
 
-        food.usedIngredients.forEach((ingredient) => {
+        for (const ingredient of food.usedIngredients) {
           if (ingredient.id) {
-            promises.push(
-              ctx.db
-                .update(usedIngredients)
-                .set({
-                  name: ingredient.name,
-                  calories: ingredient.calories,
-                  quantity: ingredient.quantity,
-                  updatedAt: new Date(),
-                })
-                .where(eq(usedIngredients.id, ingredient.id)),
-            )
-          } else {
-            promises.push(
-              ctx.db.insert(usedIngredients).values({
-                foodId: food.id,
+            await ctx.db
+              .update(usedIngredients)
+              .set({
                 name: ingredient.name,
                 calories: ingredient.calories,
                 quantity: ingredient.quantity,
                 updatedAt: new Date(),
-              }),
-            )
+              })
+              .where(eq(usedIngredients.id, ingredient.id))
+          } else {
+            await ctx.db.insert(usedIngredients).values({
+              foodId: food.id,
+              name: ingredient.name,
+              calories: ingredient.calories,
+              quantity: ingredient.quantity,
+              updatedAt: new Date(),
+            })
           }
-        })
-      })
-
-      return Promise.all(promises)
+        }
+      }
     }),
 
   search: protectedProcedure
@@ -192,21 +210,21 @@ export const cookingRouter = createTRPCRouter({
 
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.query.cookings.findFirst({
+    .query(({ ctx, input }) =>
+      ctx.db.query.cookings.findFirst({
         where: eq(cookings.id, input.id),
         with: {
           foods: {
             with: {
               usedIngredients: {
-                orderBy: (usedIngredients, { desc }) => [
-                  desc(usedIngredients.createdAt),
+                orderBy: (usedIngredients, { asc }) => [
+                  asc(usedIngredients.createdAt),
                 ],
               },
             },
-            orderBy: (foods, { desc }) => [desc(foods.createdAt)],
+            orderBy: (foods, { asc }) => [asc(foods.createdAt)],
           },
         },
-      })
-    }),
+      }),
+    ),
 })

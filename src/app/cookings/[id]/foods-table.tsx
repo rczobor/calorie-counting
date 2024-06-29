@@ -1,3 +1,5 @@
+"use client"
+
 import { FormArrayMessage, FormField, FormItem } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
 import { useFieldArray, useFormContext } from "react-hook-form"
@@ -15,7 +17,6 @@ export default function FoodsTable() {
   })
   const { mutateAsync: getIngredients } =
     api.recipe.getIngredientsMutation.useMutation()
-
   const { fields, remove, append } = useFieldArray({
     control: form.control,
     name: "foods",
@@ -66,12 +67,13 @@ export default function FoodsTable() {
             const ingredients = await getIngredients({ id: recipe.id })
 
             append({
-              id: Infinity,
+              id: null,
               name: recipe.name,
               recipeId: recipe.id,
               quantity: 0,
               usedIngredients: ingredients.map((ingredient) => ({
-                id: ingredient.id,
+                id: null,
+                foodId: null,
                 name: ingredient.name,
                 calories: ingredient.calories,
                 quantity: 0,

@@ -27,7 +27,7 @@ const formSchema = z.object({
   foods: z
     .array(
       z.object({
-        id: z.number().int(),
+        id: z.number().int().nullable(),
         recipeId: z.number(),
         name: z.string().min(2, {
           message: "Name must be at least 2 characters.",
@@ -38,7 +38,8 @@ const formSchema = z.object({
         usedIngredients: z
           .array(
             z.object({
-              id: z.number().int(),
+              id: z.number().int().nullable(),
+              foodId: z.number().int().nullable(),
               name: z.string().min(2, {
                 message: "Name must be at least 2 characters.",
               }),
