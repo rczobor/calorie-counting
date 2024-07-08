@@ -52,16 +52,16 @@ importers:
         version: 5.49.2(react@18.3.1)
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.433(@trpc/server@11.0.0-rc.433)
+        version: 11.0.0-rc.449(@trpc/server@11.0.0-rc.449)
       '@trpc/next':
         specifier: next
-        version: 11.0.0-rc.433(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433))(@trpc/react-query@11.0.0-rc.433(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433))(@trpc/server@11.0.0-rc.433)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.433)(next@14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 11.0.0-rc.449(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449))(@trpc/react-query@11.0.0-rc.449(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449))(@trpc/server@11.0.0-rc.449)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.449)(next@14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/react-query':
         specifier: next
-        version: 11.0.0-rc.433(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433))(@trpc/server@11.0.0-rc.433)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 11.0.0-rc.449(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449))(@trpc/server@11.0.0-rc.449)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.433
+        version: 11.0.0-rc.449
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -70,7 +70,7 @@ importers:
         version: 2.1.1
       drizzle-orm:
         specifier: ^0.31.2
-        version: 0.31.2(@neondatabase/serverless@0.9.4)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
+        version: 0.31.3(@neondatabase/serverless@0.9.4)(@prisma/client@5.16.1)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
       next:
         specifier: ^14.2.4
         version: 14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -615,6 +615,15 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
+  '@prisma/client@5.16.1':
+    resolution: {integrity: sha512-wM9SKQjF0qLxdnOZIVAIMKiz6Hu7vDt4FFAih85K1dk/Rr2mdahy6d3QP41K62N9O0DJJA//gUDA3Mp49xsKIg==}
+    engines: {node: '>=16.13'}
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+
   '@radix-ui/primitive@1.1.0':
     resolution: {integrity: sha512-4Z8dn6Upk0qk4P74xBhZ6Hd/w0mPEzOOLxy4xiPXOXqjF7jZS0VAKk7/x/H6FyY2zCkYJqePf1G5KmkmNJ4RBA==}
 
@@ -1012,18 +1021,18 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-  '@trpc/client@11.0.0-rc.433':
-    resolution: {integrity: sha512-QEPk14HGP4GK/88v7ORChN2GYbaP+LlCJMQHPRFogaVzapSbiE6C6PN+vNTn8soD28SuPOu+lRzuJszLIuhIPA==}
+  '@trpc/client@11.0.0-rc.449':
+    resolution: {integrity: sha512-F/IRYnUJgp3xHsbaWUbOA50IOI3jUkNhBHM3dPpb8pt5IdkwqMzG+u4X45igMvxd387sL14gRk5xU1oz9cH8Lw==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.433+014d1c839
+      '@trpc/server': 11.0.0-rc.449+42acce6ac
 
-  '@trpc/next@11.0.0-rc.433':
-    resolution: {integrity: sha512-kTICXVZplIOnKPIXePeyd8rlC8VXC58p2AzCExrAIYlQtcm/63GvYrkoUTOelcJYCr+Sc5YYjZf0y2rKLSqBoA==}
+  '@trpc/next@11.0.0-rc.449':
+    resolution: {integrity: sha512-YIZSx3oU1KLm8Ijg2pZ1yQRh3PxZCeeXoy8x+AhKrRaUIkkDpXYkdQ5AOGa+kWb88/5UBlmz9vF+9eBon1xwJQ==}
     peerDependencies:
-      '@tanstack/react-query': ^5.40.0
-      '@trpc/client': 11.0.0-rc.433+014d1c839
-      '@trpc/react-query': 11.0.0-rc.433+014d1c839
-      '@trpc/server': 11.0.0-rc.433+014d1c839
+      '@tanstack/react-query': ^5.49.2
+      '@trpc/client': 11.0.0-rc.449+42acce6ac
+      '@trpc/react-query': 11.0.0-rc.449+42acce6ac
+      '@trpc/server': 11.0.0-rc.449+42acce6ac
       next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -1033,17 +1042,17 @@ packages:
       '@trpc/react-query':
         optional: true
 
-  '@trpc/react-query@11.0.0-rc.433':
-    resolution: {integrity: sha512-MXe9C7gq5eId6Uz30M24D11D1zc/As91WVhKZS8i3yb+VERxvRmhfWyGRn7BJvhCApZ/8eKlsKbWq48SrATlhg==}
+  '@trpc/react-query@11.0.0-rc.449':
+    resolution: {integrity: sha512-CokXudkoIgIYWTjVnDSNuErpo1xpRAcTP0FcINe0IUE9iNt+d2BfnOUKF2YgYPNekta559334/v1PLim7GYGsQ==}
     peerDependencies:
-      '@tanstack/react-query': ^5.40.0
-      '@trpc/client': 11.0.0-rc.433+014d1c839
-      '@trpc/server': 11.0.0-rc.433+014d1c839
+      '@tanstack/react-query': ^5.49.2
+      '@trpc/client': 11.0.0-rc.449+42acce6ac
+      '@trpc/server': 11.0.0-rc.449+42acce6ac
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
 
-  '@trpc/server@11.0.0-rc.433':
-    resolution: {integrity: sha512-Zfafmbcv9HS/MBhW4O1JSw0b5Dnvm5PkwPviy64hyG9vRoCDPOLYyxRQD7TBdcWecITvjcQjmcdIGjQyNBVNJw==}
+  '@trpc/server@11.0.0-rc.449':
+    resolution: {integrity: sha512-xM/vQ042wA0FPAFhY18KcNJgiMMjdPk4mG3GXdHx4X9tpBuSlENUMZErEsuBrvbSpqbkIpalz5yY99/cPnHbCw==}
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -1440,8 +1449,8 @@ packages:
     resolution: {integrity: sha512-VjI4wsJjk3hSqHSa3TwBf+uvH6M6pRHyxyoVbt935GUzP9tUR/BRZ+MhEJNgryqbzN2Za1KP0eJMTgKEPsalYQ==}
     hasBin: true
 
-  drizzle-orm@0.31.2:
-    resolution: {integrity: sha512-QnenevbnnAzmbNzQwbhklvIYrDE8YER8K7kSrAWQSV1YvFCdSQPzj+jzqRdTSsV2cDqSpQ0NXGyL1G9I43LDLg==}
+  drizzle-orm@0.31.3:
+    resolution: {integrity: sha512-EpBqJeeUHH3jQrXSojCnclCoP5jMZafzSQs0NO1cu7t6cf4F+8acC9DjyWhanCqEmRn+0nJyAEU6xHQDYTEjnQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -1451,6 +1460,7 @@ packages:
       '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
+      '@prisma/client': '*'
       '@tidbcloud/serverless': '*'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
@@ -3214,6 +3224,8 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
+  '@prisma/client@5.16.1': {}
+
   '@radix-ui/primitive@1.1.0': {}
 
   '@radix-ui/react-accordion@1.2.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -3589,30 +3601,30 @@ snapshots:
       '@tanstack/query-core': 5.49.1
       react: 18.3.1
 
-  '@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433)':
+  '@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.433
+      '@trpc/server': 11.0.0-rc.449
 
-  '@trpc/next@11.0.0-rc.433(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433))(@trpc/react-query@11.0.0-rc.433(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433))(@trpc/server@11.0.0-rc.433)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.433)(next@14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@trpc/next@11.0.0-rc.449(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449))(@trpc/react-query@11.0.0-rc.449(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449))(@trpc/server@11.0.0-rc.449)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.449)(next@14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@trpc/client': 11.0.0-rc.433(@trpc/server@11.0.0-rc.433)
-      '@trpc/server': 11.0.0-rc.433
+      '@trpc/client': 11.0.0-rc.449(@trpc/server@11.0.0-rc.449)
+      '@trpc/server': 11.0.0-rc.449
       next: 14.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@tanstack/react-query': 5.49.2(react@18.3.1)
-      '@trpc/react-query': 11.0.0-rc.433(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433))(@trpc/server@11.0.0-rc.433)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@trpc/react-query': 11.0.0-rc.449(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449))(@trpc/server@11.0.0-rc.449)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@trpc/react-query@11.0.0-rc.433(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.433(@trpc/server@11.0.0-rc.433))(@trpc/server@11.0.0-rc.433)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@trpc/react-query@11.0.0-rc.449(@tanstack/react-query@5.49.2(react@18.3.1))(@trpc/client@11.0.0-rc.449(@trpc/server@11.0.0-rc.449))(@trpc/server@11.0.0-rc.449)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tanstack/react-query': 5.49.2(react@18.3.1)
-      '@trpc/client': 11.0.0-rc.433(@trpc/server@11.0.0-rc.433)
-      '@trpc/server': 11.0.0-rc.433
+      '@trpc/client': 11.0.0-rc.449(@trpc/server@11.0.0-rc.449)
+      '@trpc/server': 11.0.0-rc.449
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@trpc/server@11.0.0-rc.433': {}
+  '@trpc/server@11.0.0-rc.449': {}
 
   '@types/cookie@0.6.0': {}
 
@@ -4080,7 +4092,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.31.2(@neondatabase/serverless@0.9.4)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1):
+  drizzle-orm@0.31.3(@neondatabase/serverless@0.9.4)(@prisma/client@5.16.1)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1):
+    dependencies:
+      '@prisma/client': 5.16.1
     optionalDependencies:
       '@neondatabase/serverless': 0.9.4
       '@types/pg': 8.11.6
