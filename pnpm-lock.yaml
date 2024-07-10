@@ -69,8 +69,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       drizzle-orm:
-        specifier: ^0.31.4
-        version: 0.31.4(@neondatabase/serverless@0.9.4)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
+        specifier: ^0.32.0
+        version: 0.32.0(@neondatabase/serverless@0.9.4)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
       next:
         specifier: ^14.2.5
         version: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -127,8 +127,8 @@ importers:
         specifier: ^7.16.0
         version: 7.16.0(eslint@8.57.0)(typescript@5.5.3)
       drizzle-kit:
-        specifier: ^0.22.8
-        version: 0.22.8
+        specifier: ^0.23.0
+        version: 0.23.0
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -1436,12 +1436,12 @@ packages:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
 
-  drizzle-kit@0.22.8:
-    resolution: {integrity: sha512-VjI4wsJjk3hSqHSa3TwBf+uvH6M6pRHyxyoVbt935GUzP9tUR/BRZ+MhEJNgryqbzN2Za1KP0eJMTgKEPsalYQ==}
+  drizzle-kit@0.23.0:
+    resolution: {integrity: sha512-w9jE97z193dd4jzAyj4Uv2SOh8Ydue70Ki6W0awy4bGM1aPXan6zD6Yv+nNTA6oGgNTDl2MJFxutjHG4fden5g==}
     hasBin: true
 
-  drizzle-orm@0.31.4:
-    resolution: {integrity: sha512-VGD9SH9aStF2z4QOTnVlVX/WghV/EnuEzTmsH3fSVp2E4fFgc8jl3viQrS/XUJx1ekW4rVVLJMH42SfGQdjX3Q==}
+  drizzle-orm@0.32.0:
+    resolution: {integrity: sha512-99IlfVGPNHzOFEXo9Phyu5At5TALLsY2t6WxFFy68rYd9Ej4cHX/7WjdPOn7JNRW69MNeNtP8XrDQg43SppuAA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -4075,7 +4075,7 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  drizzle-kit@0.22.8:
+  drizzle-kit@0.23.0:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
       esbuild: 0.19.12
@@ -4083,7 +4083,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.31.4(@neondatabase/serverless@0.9.4)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1):
+  drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1):
     optionalDependencies:
       '@neondatabase/serverless': 0.9.4
       '@types/pg': 8.11.6
