@@ -13,6 +13,7 @@ import { type CookingFormValues } from "./edit-cooking"
 import { Separator } from "~/components/ui/separator"
 import UsedIngredientForm from "./used-ingredient-form"
 import IngredientDialog from "~/app/ingredients/ingredient-dialog"
+import { type Ingredient } from "~/server/db/schema"
 
 export default function FoodForm({
   foodIndex,
@@ -22,9 +23,13 @@ export default function FoodForm({
   removeFood: () => void
 }) {
   const form = useFormContext<CookingFormValues>()
-  const { fields, remove } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control: form.control,
     name: `foods.${foodIndex}.usedIngredients`,
+  })
+  const foodId = useWatch({
+    control: form.control,
+    name: `foods.${foodIndex}.id`,
   })
   const ingredients = useWatch({
     control: form.control,
@@ -55,6 +60,16 @@ export default function FoodForm({
     )
   }
 
+  const handleAddIngredient = (ingredient: Ingredient) => {
+    append({
+      id: null,
+      name: ingredient.name,
+      calories: ingredient.calories,
+      foodId: foodId,
+      quantity: 0,
+    })
+  }
+
   return (
     <>
       <Separator />
@@ -81,7 +96,7 @@ export default function FoodForm({
           )}
         />
 
-        <IngredientDialog onAdd={(ingredient) => console.log(ingredient)} />
+        <IngredientDialog onAdd={handleAddIngredient} />
 
         <Button variant="destructive" onClick={removeFood}>
           Delete
@@ -91,7 +106,12 @@ export default function FoodForm({
 
         <div>|</div>
 
-        {!!quantity && <div>{calories} Calories/100</div>}
+        {!!quantity && (
+          <div>
+            Total Calories/100 ={" "}
+            <span className="font-extrabold underline">{calories}</span>
+          </div>
+        )}
       </div>
 
       {fields.map((field, index) => (
