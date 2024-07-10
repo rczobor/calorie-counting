@@ -114,6 +114,15 @@ export const cookingRouter = createTRPCRouter({
 
       for (const food of input.foods) {
         if (food.id) {
+          await ctx.db
+            .update(foods)
+            .set({
+              name: food.name,
+              quantity: food.quantity,
+              updatedAt: new Date(),
+            })
+            .where(eq(foods.id, food.id))
+
           await ctx.db.delete(usedIngredients).where(
             and(
               eq(usedIngredients.foodId, food.id),
@@ -129,14 +138,7 @@ export const cookingRouter = createTRPCRouter({
               ),
             ),
           )
-          await ctx.db
-            .update(foods)
-            .set({
-              name: food.name,
-              quantity: food.quantity,
-              updatedAt: new Date(),
-            })
-            .where(eq(foods.id, food.id))
+
           for (const ingredient of food.usedIngredients) {
             if (ingredient.id) {
               await ctx.db
