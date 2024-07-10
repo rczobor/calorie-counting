@@ -21,7 +21,7 @@ export default function ConfirmDelete({
           Delete
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogTitle>Are you sure?</DialogTitle>
         <div className="flex justify-end gap-4">
           <DialogClose asChild>

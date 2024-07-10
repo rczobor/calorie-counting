@@ -78,10 +78,10 @@ export default function IngredientDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button">{ingredient ? "Edit" : "Create"}</Button>
+        <Button type="button">{ingredient ? "Edit" : "Add"}</Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>{ingredient ? "Edit" : "Create"} Ingredient</DialogTitle>
+      <DialogContent aria-describedby={undefined}>
+        <DialogTitle>{ingredient ? "Edit" : "Add"} Ingredient</DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex gap-4">

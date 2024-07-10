@@ -41,9 +41,19 @@ export default function FoodForm({
   const totalCalories = ingredients.reduce(
     (acc, ingredient) =>
       acc + Math.round(ingredient.calories * (ingredient.quantity / 100)),
-    0 as number,
+    0,
   )
   const calories = Math.round(totalCalories / (quantity / 100))
+
+  const handleEmptyQuantity = () => {
+    form.setValue(
+      `foods.${foodIndex}.quantity`,
+      ingredients.reduce(
+        (acc, ingredient) => acc + Number(ingredient.quantity),
+        0 as number,
+      ),
+    )
+  }
 
   return (
     <>
@@ -55,16 +65,23 @@ export default function FoodForm({
           name={`foods.${foodIndex}.quantity`}
           render={({ field }) => (
             <FormItem className="max-w-24">
-              <FormLabel>Quantity</FormLabel>
+              <FormLabel>Final Quantity</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  onBlur={(event) => {
+                    if (event.target.value === "") {
+                      handleEmptyQuantity()
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <IngredientDialog onAdd={console.log} />
+        <IngredientDialog onAdd={(ingredient) => console.log(ingredient)} />
 
         <Button variant="destructive" onClick={removeFood}>
           Delete
@@ -74,11 +91,7 @@ export default function FoodForm({
 
         <div>|</div>
 
-        {!!quantity && (
-          <div>
-            {totalCalories} / {quantity} = {calories}
-          </div>
-        )}
+        {!!quantity && <div>{calories} Calories/100</div>}
       </div>
 
       {fields.map((field, index) => (

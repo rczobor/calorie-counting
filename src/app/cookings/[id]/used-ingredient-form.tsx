@@ -98,7 +98,7 @@ export default function UsedIngredientForm({
         Delete
       </Button>
 
-      <div>{totalCalories} Calories</div>
+      <div>{totalCalories} Total Calories</div>
     </div>
   )
 }
