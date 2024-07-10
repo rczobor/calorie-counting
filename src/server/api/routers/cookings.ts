@@ -91,8 +91,6 @@ export const cookingRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO add multiple foods only adds first one
-
       await ctx.db
         .update(cookings)
         .set({ name: input.name, updatedAt: new Date() })
@@ -139,6 +137,27 @@ export const cookingRouter = createTRPCRouter({
               updatedAt: new Date(),
             })
             .where(eq(foods.id, food.id))
+          for (const ingredient of food.usedIngredients) {
+            if (ingredient.id) {
+              await ctx.db
+                .update(usedIngredients)
+                .set({
+                  name: ingredient.name,
+                  calories: ingredient.calories,
+                  quantity: ingredient.quantity,
+                  updatedAt: new Date(),
+                })
+                .where(eq(usedIngredients.id, ingredient.id))
+            } else {
+              await ctx.db.insert(usedIngredients).values({
+                foodId: food.id,
+                name: ingredient.name,
+                calories: ingredient.calories,
+                quantity: ingredient.quantity,
+                updatedAt: new Date(),
+              })
+            }
+          }
         } else {
           const [newFood] = await ctx.db
             .insert(foods)
@@ -158,30 +177,6 @@ export const cookingRouter = createTRPCRouter({
           for (const ingredient of food.usedIngredients) {
             await ctx.db.insert(usedIngredients).values({
               foodId: newFood.id,
-              name: ingredient.name,
-              calories: ingredient.calories,
-              quantity: ingredient.quantity,
-              updatedAt: new Date(),
-            })
-          }
-
-          return
-        }
-
-        for (const ingredient of food.usedIngredients) {
-          if (ingredient.id) {
-            await ctx.db
-              .update(usedIngredients)
-              .set({
-                name: ingredient.name,
-                calories: ingredient.calories,
-                quantity: ingredient.quantity,
-                updatedAt: new Date(),
-              })
-              .where(eq(usedIngredients.id, ingredient.id))
-          } else {
-            await ctx.db.insert(usedIngredients).values({
-              foodId: food.id,
               name: ingredient.name,
               calories: ingredient.calories,
               quantity: ingredient.quantity,
