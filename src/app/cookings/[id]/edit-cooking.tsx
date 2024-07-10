@@ -19,6 +19,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import FoodsTable from "./foods-table"
 
+// TODO add blank foods
+// TODO save blank food as recipe with ingredients (blank usedIngredients will have to be added to the ingredients table)
+
 const formSchema = z.object({
   id: z.number().int(),
   name: z.string().min(2, {

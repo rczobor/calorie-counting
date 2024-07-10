@@ -1,4 +1,4 @@
-import { and, eq, inArray, like, not } from "drizzle-orm"
+import { and, eq, inArray, not, sql } from "drizzle-orm"
 import { z } from "zod"
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
@@ -67,12 +67,18 @@ export const recipeRouter = createTRPCRouter({
 
   search: protectedProcedure
     .input(z.object({ name: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.query.recipes.findMany({
-        where: like(recipes.name, `%${input.name}%`),
-        orderBy: (recipes, { desc }) => [desc(recipes.updatedAt)],
-        limit: 10,
-      })
+    .query(async ({ ctx, input }) => {
+      if (input.name === "") {
+        return ctx.db.query.recipes.findMany({
+          orderBy: (recipes, { desc }) => [desc(recipes.updatedAt)],
+          limit: 10,
+        })
+      }
+      return ctx.db
+        .select()
+        .from(recipes)
+        .where(sql`${recipes.name} % ${input.name}`)
+        .orderBy(sql`SIMILARITY(${recipes.name}, ${input.name}) DESC`)
     }),
 
   getById: protectedProcedure

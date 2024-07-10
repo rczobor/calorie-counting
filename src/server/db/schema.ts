@@ -7,6 +7,7 @@ import {
   text,
   timestamp,
   pgTableCreator,
+  varchar,
 } from "drizzle-orm/pg-core"
 import { type AdapterAccount } from "next-auth/adapters"
 
@@ -19,13 +20,17 @@ import { type AdapterAccount } from "next-auth/adapters"
 export const createTable = pgTableCreator((name) => `calorie-counting_${name}`)
 
 export const users = createTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name"),
-  email: text("email").notNull(),
-  emailVerified: timestamp("emailVerified", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 255 }).notNull(),
+  emailVerified: timestamp("email_verified", {
     mode: "date",
+    withTimezone: true,
   }).default(sql`CURRENT_TIMESTAMP`),
-  image: text("image"),
+  image: varchar("image", { length: 255 }),
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -35,25 +40,29 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const accounts = createTable(
   "account",
   {
-    userId: text("userId")
+    userId: varchar("user_id", { length: 255 })
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccount["type"]>().notNull(),
-    provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
+      .references(() => users.id),
+    type: varchar("type", { length: 255 })
+      .$type<AdapterAccount["type"]>()
+      .notNull(),
+    provider: varchar("provider", { length: 255 }).notNull(),
+    providerAccountId: varchar("provider_account_id", {
+      length: 255,
+    }).notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
-    token_type: text("token_type"),
-    scope: text("scope"),
+    token_type: varchar("token_type", { length: 255 }),
+    scope: varchar("scope", { length: 255 }),
     id_token: text("id_token"),
-    session_state: text("session_state"),
+    session_state: varchar("session_state", { length: 255 }),
   },
   (account) => ({
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-    userIdIdx: index("account_userId_idx").on(account.userId),
+    userIdIdx: index("account_user_id_idx").on(account.userId),
   }),
 )
 
@@ -64,14 +73,19 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 export const sessions = createTable(
   "session",
   {
-    sessionToken: text("sessionToken").notNull().primaryKey(),
-    userId: text("userId")
+    sessionToken: varchar("session_token", { length: 255 })
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
+      .primaryKey(),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id),
+    expires: timestamp("expires", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
   },
   (session) => ({
-    userIdIdx: index("session_userId_idx").on(session.userId),
+    userIdIdx: index("session_user_id_idx").on(session.userId),
   }),
 )
 
@@ -80,11 +94,14 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 }))
 
 export const verificationTokens = createTable(
-  "verificationToken",
+  "verification_token",
   {
-    identifier: text("identifier").notNull(),
-    token: text("token").notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    token: varchar("token", { length: 255 }).notNull(),
+    expires: timestamp("expires", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
