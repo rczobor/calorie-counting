@@ -52,16 +52,16 @@ importers:
         version: 5.59.0(react@18.3.1)
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.563(@trpc/server@11.0.0-rc.563)
+        version: 11.0.0-rc.571(@trpc/server@11.0.0-rc.571)
       '@trpc/next':
         specifier: next
-        version: 11.0.0-rc.563(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563))(@trpc/react-query@11.0.0-rc.563(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563))(@trpc/server@11.0.0-rc.563)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.563)(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 11.0.0-rc.571(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571))(@trpc/react-query@11.0.0-rc.571(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571))(@trpc/server@11.0.0-rc.571)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.571)(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/react-query':
         specifier: next
-        version: 11.0.0-rc.563(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563))(@trpc/server@11.0.0-rc.563)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 11.0.0-rc.571(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571))(@trpc/server@11.0.0-rc.571)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.563
+        version: 11.0.0-rc.571
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -100,7 +100,7 @@ importers:
         version: 2.2.1
       tailwind-merge:
         specifier: ^2.5.3
-        version: 2.5.3
+        version: 2.5.4
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.13)
@@ -1033,18 +1033,18 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
-  '@trpc/client@11.0.0-rc.563':
-    resolution: {integrity: sha512-N1ldp7NGduuWoj/cuAQXvKkp/2MM3eVteRGLxuOgD5HzCKoDaJRSR/7EUm0qz8o51TW1LMbdoiYsM5Ip1lmXdA==}
+  '@trpc/client@11.0.0-rc.571':
+    resolution: {integrity: sha512-mUX47avAwgkirC91rtnde7B8QVbvd+121wgud3q22gYBI1hrGFn8isFwXdPquVneXNL5p1JjfhpZzDwzHmUJ4Q==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.563+e5ae464b2
+      '@trpc/server': 11.0.0-rc.571+a70e169ce
 
-  '@trpc/next@11.0.0-rc.563':
-    resolution: {integrity: sha512-bvsumHcEZ2e22Av7E8LJazi/2pbLZ1QARyXQBjl5MocQENrRZsAyC2X807NfT0MrQVVx36yORre+uWaq7a6cEg==}
+  '@trpc/next@11.0.0-rc.571':
+    resolution: {integrity: sha512-CoMh0FipQDJQUxd5y0qt24M6CV2RiccXQYd33OSoKSOQWypfSWj5IYhwAc6sz6V2hWOt/xMuXx+C+JvYmsX57w==}
     peerDependencies:
       '@tanstack/react-query': ^5.54.1
-      '@trpc/client': 11.0.0-rc.563+e5ae464b2
-      '@trpc/react-query': 11.0.0-rc.563+e5ae464b2
-      '@trpc/server': 11.0.0-rc.563+e5ae464b2
+      '@trpc/client': 11.0.0-rc.571+a70e169ce
+      '@trpc/react-query': 11.0.0-rc.571+a70e169ce
+      '@trpc/server': 11.0.0-rc.571+a70e169ce
       next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -1054,17 +1054,17 @@ packages:
       '@trpc/react-query':
         optional: true
 
-  '@trpc/react-query@11.0.0-rc.563':
-    resolution: {integrity: sha512-JV4ZSafMbT+S2gOdOr5mduPDSHQa7ZC/ckaVJn/fGNf+fUuzMrykm2gxQ1AZ/toFV/gJa2s4X7A6+SgfXiGJsQ==}
+  '@trpc/react-query@11.0.0-rc.571':
+    resolution: {integrity: sha512-+LNIou3JQ/wQybTk1Vt90cKWk8LGGHrhsHiTWJFRiApaNgl/y7EkOfoOZ/we8jY3hPnyG5CXcqXx9SDbrmy8lg==}
     peerDependencies:
       '@tanstack/react-query': ^5.54.1
-      '@trpc/client': 11.0.0-rc.563+e5ae464b2
-      '@trpc/server': 11.0.0-rc.563+e5ae464b2
+      '@trpc/client': 11.0.0-rc.571+a70e169ce
+      '@trpc/server': 11.0.0-rc.571+a70e169ce
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
 
-  '@trpc/server@11.0.0-rc.563':
-    resolution: {integrity: sha512-yB7oNWIIrZTavlETrQeijo+JUh6CTeQTrqlMCJ7qHfqyadrfxa7O4JJ5pk9J5nur0sxiACwFi0RiQxSlrOVb2A==}
+  '@trpc/server@11.0.0-rc.571':
+    resolution: {integrity: sha512-CISo9BoXSArTPt3MfxbOTPUcEdtKOl5Qgp8P+udiaA/nRmjndvVeZWQSmy1elRv0mQ/vvUI1VLsYm9Dn1/bysw==}
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -2720,8 +2720,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  tailwind-merge@2.5.3:
-    resolution: {integrity: sha512-d9ZolCAIzom1nf/5p4LdD5zvjmgSxY0BGgdSvmXIoMYAiPdAW/dSpP7joCDYFY7r/HkEa2qmPtkgsu0xjQeQtw==}
+  tailwind-merge@2.5.4:
+    resolution: {integrity: sha512-0q8cfZHMu9nuYP/b5Shb7Y7Sh1B7Nnl5GqNr1U+n2p6+mybvRtayrQ+0042Z5byvTA8ihjlP8Odo8/VnHbZu4Q==}
 
   tailwindcss-animate@1.0.7:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -3579,30 +3579,30 @@ snapshots:
       '@tanstack/query-core': 5.59.0
       react: 18.3.1
 
-  '@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563)':
+  '@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.563
+      '@trpc/server': 11.0.0-rc.571
 
-  '@trpc/next@11.0.0-rc.563(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563))(@trpc/react-query@11.0.0-rc.563(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563))(@trpc/server@11.0.0-rc.563)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.563)(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@trpc/next@11.0.0-rc.571(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571))(@trpc/react-query@11.0.0-rc.571(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571))(@trpc/server@11.0.0-rc.571)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@trpc/server@11.0.0-rc.571)(next@14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@trpc/client': 11.0.0-rc.563(@trpc/server@11.0.0-rc.563)
-      '@trpc/server': 11.0.0-rc.563
+      '@trpc/client': 11.0.0-rc.571(@trpc/server@11.0.0-rc.571)
+      '@trpc/server': 11.0.0-rc.571
       next: 14.2.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@tanstack/react-query': 5.59.0(react@18.3.1)
-      '@trpc/react-query': 11.0.0-rc.563(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563))(@trpc/server@11.0.0-rc.563)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@trpc/react-query': 11.0.0-rc.571(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571))(@trpc/server@11.0.0-rc.571)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@trpc/react-query@11.0.0-rc.563(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.563(@trpc/server@11.0.0-rc.563))(@trpc/server@11.0.0-rc.563)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@trpc/react-query@11.0.0-rc.571(@tanstack/react-query@5.59.0(react@18.3.1))(@trpc/client@11.0.0-rc.571(@trpc/server@11.0.0-rc.571))(@trpc/server@11.0.0-rc.571)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tanstack/react-query': 5.59.0(react@18.3.1)
-      '@trpc/client': 11.0.0-rc.563(@trpc/server@11.0.0-rc.563)
-      '@trpc/server': 11.0.0-rc.563
+      '@trpc/client': 11.0.0-rc.571(@trpc/server@11.0.0-rc.571)
+      '@trpc/server': 11.0.0-rc.571
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@trpc/server@11.0.0-rc.563': {}
+  '@trpc/server@11.0.0-rc.571': {}
 
   '@types/cookie@0.6.0': {}
 
@@ -5384,7 +5384,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  tailwind-merge@2.5.3: {}
+  tailwind-merge@2.5.4: {}
 
   tailwindcss-animate@1.0.7(tailwindcss@3.4.13):
     dependencies:
