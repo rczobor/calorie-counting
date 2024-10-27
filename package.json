@@ -34,7 +34,7 @@
     "@trpc/server": "next",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "drizzle-orm": "^0.34.1",
+    "drizzle-orm": "^0.35.3",
     "next": "^14.2.16",
     "next-auth": "^4.24.10",
     "next-themes": "^0.3.0",
