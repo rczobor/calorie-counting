@@ -1,11 +1,12 @@
 import { api } from "~/trpc/server"
 import Recipe from "./recipe"
 
-export default async function RecipePage({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function RecipePage(
+  props: {
+    params: Promise<{ id: string }>
+  }
+) {
+  const params = await props.params;
   if (params.id === "new") {
     return (
       <section>

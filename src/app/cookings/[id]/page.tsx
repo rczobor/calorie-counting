@@ -2,11 +2,12 @@ import { api } from "~/trpc/server"
 import CreateCooking from "./create-cooking"
 import EditCooking from "./edit-cooking"
 
-export default async function CookingPage({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function CookingPage(
+  props: {
+    params: Promise<{ id: string }>
+  }
+) {
+  const params = await props.params;
   if (params.id === "new") {
     return (
       <section>
